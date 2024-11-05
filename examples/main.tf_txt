@@ -1,0 +1,20 @@
+
+resource "citrix_admin_folder" "example-admin-folder-1" {
+  name = var.mandant_prefix
+  type = ["ContainsApplications"]
+}
+
+module "terraform_citrixdaas_pa_mvd" {
+  source                                     = "github.com/adraxas-citrix-bot/terraform-citrixdaas-pa-mvd?ref=0.0.13"
+  citrix_application_name                    = var.citrix_application_name
+  citrix_application_description             = var.citrix_application_description
+  citrix_application_published_name          = var.citrix_application_published_name
+  citrix_application_command_line_arguments  = "“%**”"
+  citrix_application_command_line_executable = var.citrix_application_command_line_executable
+  citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
+  citrix_application_visibility              = var.citrix_application_visibility
+  citrix_application_icon                    = filebase64("${path.module}/icons/citrix.ico")
+  citrix_application_folder_path             = citrix_admin_folder.example-admin-folder-1.path
+  citrix_deliverygroup_name                  = [data.citrix_delivery_group.example_delivery_group.id]
+
+}
