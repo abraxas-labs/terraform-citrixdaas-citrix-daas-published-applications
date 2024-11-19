@@ -99,8 +99,9 @@ resource "citrix_admin_folder" "example_admin_folder_1" {
 # Resources
 ###############################################################################
 
-module "terraform_citrixdaas_pa_mvd" {
-  source = "github.com/adraxas-citrix-bot/terraform-citrixdaas-pa-mvd?ref=0.5.2"
+module "citrix-daas-published-applications" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "0.5.3"
   citrix_application_name                    = var.citrix_application_name
   citrix_application_description             = var.citrix_application_description
   citrix_application_published_name          = var.citrix_application_published_name
@@ -112,6 +113,7 @@ module "terraform_citrixdaas_pa_mvd" {
   citrix_application_folder_path             = citrix_admin_folder.example_admin_folder_1.path
   citrix_deliverygroup_name                  = data.citrix_delivery_group.example_delivery_group.name
 }
+
 
 resource "citrix_application_icon" "example_application_icon" {
   raw_data = filebase64("${path.module}/${var.icon_path}")
@@ -207,37 +209,34 @@ icon_path                                  = "icons/citrix.ico"
 </details>
 
 
-# Next Steps
-## Initialize Terraform: Run 
+## Next Steps
+### Initialize Terraform: Run 
 ```hcl
 terraform init.
 ```
 
-## Plan and Apply Terraform Configuration:
-Execute 
+### Plan and Apply Terraform Configuration:
 ```hcl 
 terraform plan
 ```
 
-Execute 
 ```hcl 
 terraform apply -auto-approve
 ```
 
 ## Destroy Terraform Resources: 
 
-Execute 
 ```hcl 
 terraform destroy -auto-approve
 ```
 
-# Contributing
+## Contributing
 Thank you to all the people who have contributed to this project!
 
 @cedfont
 @abraxas-citrix-bot
 
-# License
+## License
 This module is licensed under the MIT License. See the LICENSE file for details.
 
 
