@@ -8,12 +8,13 @@ resource "citrix_application" "published_application" {
     command_line_executable = var.citrix_application_command_line_executable
     working_directory       = var.citrix_application_working_directory
   }
-  delivery_groups_priority = [
-    {
-      id       = data.citrix_delivery_group.example_delivery_group.id
-      priority = 0
-    },
-  ]
+  delivery_groups           = [data.citrix_delivery_group.example_delivery_group.id]
+  #delivery_groups_priority = [
+  #  {
+  #    id       = data.citrix_delivery_group.example_delivery_group.id
+  #    priority = 0
+   # },
+  #]
   icon                      = var.citrix_application_icon
   limit_visibility_to_users = var.citrix_application_visibility
 }
