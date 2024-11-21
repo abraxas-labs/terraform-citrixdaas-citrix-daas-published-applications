@@ -35,19 +35,21 @@ resource "citrix_admin_folder" "example_admin_folder_1" {
 ###############################################################################
 
 module "citrix-daas-published-applications" {
-  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "0.5.3"
+  source                                     = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version                                    = "0.5.10"
   citrix_application_name                    = var.citrix_application_name
   citrix_application_description             = var.citrix_application_description
   citrix_application_published_name          = var.citrix_application_published_name
   citrix_application_command_line_arguments  = "“%**”"
   citrix_application_command_line_executable = var.citrix_application_command_line_executable
   citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
-  citrix_application_visibility              = var.citrix_application_visibility
-  citrix_application_icon                    = citrix_application_icon.example_application_icon.id
   citrix_application_folder_path             = citrix_admin_folder.example_admin_folder_1.path
   citrix_deliverygroup_name                  = data.citrix_delivery_group.example_delivery_group.name
+  # Optional parameters
+  #citrix_application_visibility              = var.citrix_application_visibility #null #
+  #citrix_application_icon        = citrix_application_icon.example_application_icon.id
 }
+
 
 
 resource "citrix_application_icon" "example_application_icon" {
@@ -89,6 +91,7 @@ variable "citrix_application_visibility" {
   By default, the application is visible to all users within a delivery group. However, you can restrict its visibility to only certain users by specifying them in the limit_visibility_to_users list.
   EOF
   type        = list(string)
+  default     = []
 }
 
 variable "citrix_deliverygroup_name" {

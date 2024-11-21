@@ -36,6 +36,7 @@ variable "citrix_deliverygroup_name" {
 variable "citrix_application_visibility" {
   description = "The visibility of the application"
   type        = list(string)
+  default     = []
 }
 
 variable "citrix_application_folder_path" {
@@ -46,4 +47,5 @@ variable "citrix_application_folder_path" {
 variable "citrix_application_icon" {
   description = "Path of Icon"
   type        = string
+  default     = ""
 }

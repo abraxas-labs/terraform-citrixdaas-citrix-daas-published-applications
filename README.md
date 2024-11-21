@@ -101,17 +101,19 @@ resource "citrix_admin_folder" "example_admin_folder_1" {
 
 module "citrix-daas-published-applications" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "0.5.3"
+  version = "0.5.10"
   citrix_application_name                    = var.citrix_application_name
   citrix_application_description             = var.citrix_application_description
   citrix_application_published_name          = var.citrix_application_published_name
   citrix_application_command_line_arguments  = "“%**”"
   citrix_application_command_line_executable = var.citrix_application_command_line_executable
   citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
-  citrix_application_visibility              = var.citrix_application_visibility
-  citrix_application_icon                    = citrix_application_icon.example_application_icon.id
   citrix_application_folder_path             = citrix_admin_folder.example_admin_folder_1.path
   citrix_deliverygroup_name                  = data.citrix_delivery_group.example_delivery_group.name
+  # Optional parameters
+  #citrix_application_visibility              = var.citrix_application_visibility
+  #citrix_application_icon                    = citrix_application_icon.example_application_icon.id
+  
 }
 
 
@@ -154,6 +156,7 @@ variable "citrix_application_visibility" {
   By default, the application is visible to all users within a delivery group. However, you can restrict its visibility to only certain users by specifying them in the limit_visibility_to_users list.
   EOF
   type        = list(string)
+  default     = []
 }
 
 variable "citrix_deliverygroup_name" {
@@ -210,23 +213,23 @@ icon_path                                  = "icons/citrix.ico"
 
 
 ## Next Steps
-### Initialize Terraform: Run 
+### Initialize Terraform: Run
 ```hcl
 terraform init.
 ```
 
 ### Plan and Apply Terraform Configuration:
-```hcl 
+```hcl
 terraform plan
 ```
 
-```hcl 
+```hcl
 terraform apply -auto-approve
 ```
 
-## Destroy Terraform Resources: 
+## Destroy Terraform Resources:
 
-```hcl 
+```hcl
 terraform destroy -auto-approve
 ```
 
@@ -251,13 +254,12 @@ This module is licensed under the MIT License. See the LICENSE file for details.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2 |
-| <a name="requirement_citrix"></a> [citrix](#requirement\_citrix) | = 1.0.4 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_citrix"></a> [citrix](#provider\_citrix) | 1.0.4 |
+| <a name="provider_citrix"></a> [citrix](#provider\_citrix) | 1.0.7 |
 
 ## Modules
 
@@ -267,8 +269,8 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [citrix_application.published_application](https://registry.terraform.io/providers/citrix/citrix/1.0.4/docs/resources/application) | resource |
-| [citrix_application_icon.application_icon](https://registry.terraform.io/providers/citrix/citrix/1.0.4/docs/resources/application_icon) | resource |
+| [citrix_application.published_application](https://registry.terraform.io/providers/citrix/citrix/latest/docs/resources/application) | resource |
+| [citrix_delivery_group.example_delivery_group](https://registry.terraform.io/providers/citrix/citrix/latest/docs/data-sources/delivery_group) | data source |
 
 ## Inputs
 
@@ -278,16 +280,17 @@ No modules.
 | <a name="input_citrix_application_command_line_executable"></a> [citrix\_application\_command\_line\_executable](#input\_citrix\_application\_command\_line\_executable) | The command line executable | `string` | n/a | yes |
 | <a name="input_citrix_application_description"></a> [citrix\_application\_description](#input\_citrix\_application\_description) | Application Description | `string` | n/a | yes |
 | <a name="input_citrix_application_folder_path"></a> [citrix\_application\_folder\_path](#input\_citrix\_application\_folder\_path) | Citrix Application folder path | `string` | n/a | yes |
-| <a name="input_citrix_application_icon"></a> [citrix\_application\_icon](#input\_citrix\_application\_icon) | Path of Icon | `string` | n/a | yes |
+| <a name="input_citrix_application_icon"></a> [citrix\_application\_icon](#input\_citrix\_application\_icon) | Path of Icon | `string` | `""` | no |
 | <a name="input_citrix_application_name"></a> [citrix\_application\_name](#input\_citrix\_application\_name) | The name of the application | `string` | n/a | yes |
 | <a name="input_citrix_application_published_name"></a> [citrix\_application\_published\_name](#input\_citrix\_application\_published\_name) | The name of the application | `string` | n/a | yes |
-| <a name="input_citrix_application_visibility"></a> [citrix\_application\_visibility](#input\_citrix\_application\_visibility) | The visibility of the application | `list(string)` | n/a | yes |
+| <a name="input_citrix_application_visibility"></a> [citrix\_application\_visibility](#input\_citrix\_application\_visibility) | The visibility of the application | `list(string)` | `[]` | no |
 | <a name="input_citrix_application_working_directory"></a> [citrix\_application\_working\_directory](#input\_citrix\_application\_working\_directory) | The working directory | `string` | n/a | yes |
-| <a name="input_citrix_deliverygroup_name"></a> [citrix\_deliverygroup\_name](#input\_citrix\_deliverygroup\_name) | Delivery group | `list(string)` | n/a | yes |
+| <a name="input_citrix_deliverygroup_name"></a> [citrix\_deliverygroup\_name](#input\_citrix\_deliverygroup\_name) | Delivery group | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | <a name="output_citrix_published_apllication_name"></a> [citrix\_published\_apllication\_name](#output\_citrix\_published\_apllication\_name) | Citrix Published Application Name |
+| <a name="output_delivery_group_name"></a> [delivery\_group\_name](#output\_delivery\_group\_name) | Citrix Delivery Group Name |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
