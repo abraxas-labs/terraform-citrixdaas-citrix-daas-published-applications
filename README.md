@@ -6,6 +6,10 @@ Welcome to the Terraform module for creating and managing Citrix Published Appli
 
 **Feedback**: If you enjoyed this tutorial, please give this repo a star by clicking the star button at the top right of this page.
 
+**Error Handling and General Questions**:
+If you encounter an error during module execution or have a general question, please create a new issue at the following link: [GitHub Issues](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues).
+
+
 ## Features
 
 - **Easy to Use**: Simple and intuitive configuration for quick setup.
@@ -101,7 +105,7 @@ resource "citrix_admin_folder" "example_admin_folder_1" {
 
 module "citrix-daas-published-applications" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "0.5.10"
+  version = "0.5.7"
   citrix_application_name                    = var.citrix_application_name
   citrix_application_description             = var.citrix_application_description
   citrix_application_published_name          = var.citrix_application_published_name
