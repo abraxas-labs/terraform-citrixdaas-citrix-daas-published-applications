@@ -1,0 +1,104 @@
+{
+  "runs": [
+    {
+      "timestamp": "2025-09-27T13:14:50Z",
+      "operation": "full_cycle",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 1948,
+      "resource_count": 18,
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-29T10:49:10Z",
+      "operation": "destroy",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 887,
+      "resource_count": 0,
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-29T11:16:42Z",
+      "operation": "deploy",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 1652,
+      "resource_count": 0,
+      "success": false
+    },
+    {
+      "timestamp": "2025-09-29T11:16:42Z",
+      "operation": "full_cycle",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 2539,
+      "resource_count": 0,
+      "success": false
+    },
+    {
+      "timestamp": "2025-09-29T11:34:01Z",
+      "operation": "destroy",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 301,
+      "resource_count": 0,
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-29T12:01:26Z",
+      "operation": "deploy",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 1645,
+      "resource_count": 0,
+      "success": false
+    },
+    {
+      "timestamp": "2025-09-29T12:01:26Z",
+      "operation": "full_cycle",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 1946,
+      "resource_count": 0,
+      "success": false
+    },
+    {
+      "timestamp": "2025-09-29T13:19:59Z",
+      "operation": "destroy",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 313,
+      "resource_count": 0,
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-29T13:48:11Z",
+      "operation": "deploy",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 1655,
+      "resource_count": 18,
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-29T13:48:12Z",
+      "operation": "full_cycle",
+      "environment": "T",
+      "mandant": "020",
+      "customer": "SIT",
+      "duration_seconds": 2005,
+      "resource_count": 18,
+      "success": true
+    }
+  ]
+}
