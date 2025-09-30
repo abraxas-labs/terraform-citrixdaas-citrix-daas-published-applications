@@ -8,14 +8,12 @@ resource "citrix_application" "published_application" {
     command_line_executable = var.citrix_application_command_line_executable
     working_directory       = var.citrix_application_working_directory
   }
-  delivery_groups = [data.citrix_delivery_group.example_delivery_group.id]
+  delivery_groups = [data.citrix_delivery_group.this.id]
   # Optional parameters
-  icon                      = var.citrix_application_icon != "" ? var.citrix_application_icon : null                   #var.citrix_application_icon
-  limit_visibility_to_users = length(var.citrix_application_visibility) > 0 ? var.citrix_application_visibility : null #var.citrix_application_visibility
+  icon                      = var.citrix_application_icon != "" ? var.citrix_application_icon : null
+  limit_visibility_to_users = length(var.citrix_application_visibility) > 0 ? var.citrix_application_visibility : null
 }
 
-
-
-data "citrix_delivery_group" "example_delivery_group" {
+data "citrix_delivery_group" "this" {
   name = var.citrix_deliverygroup_name
 }
