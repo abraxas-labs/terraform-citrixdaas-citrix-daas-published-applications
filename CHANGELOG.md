@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2025-09-30
+
+### Changed
+- **README.md complete rewrite** for better user experience:
+  - Removed "testing purposes only" disclaimer - now production-ready
+  - Added Terraform Registry and License badges
+  - Restructured with clear Prerequisites section
+  - Added comprehensive Quick Start guide (3 steps)
+  - New Advanced Configuration section with practical examples
+  - Added examples overview with links to detailed guides
+  - Included outputs usage examples
+  - Cleaner, more professional structure
+  - Removed redundant configuration sections
+  - Better organized content flow
+
 ## [0.6.0] - 2024-09-30
 
 ### Added
@@ -97,7 +112,8 @@ output "app_name" {
 - `citrix_published_apllication_name` - Published application name (note: contains typo)
 - `delivery_group_name` - Delivery group name
 
-[Unreleased]: https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/compare/0.6.0...HEAD
+[Unreleased]: https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/compare/0.6.1...HEAD
+[0.6.1]: https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/compare/0.6.0...0.6.1
 [0.6.0]: https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/compare/0.5.8...0.6.0
 [0.5.8]: https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/compare/0.5.7...0.5.8
 [0.5.7]: https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/releases/tag/0.5.7

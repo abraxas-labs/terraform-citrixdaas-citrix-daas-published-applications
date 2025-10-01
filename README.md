@@ -1,10 +1,13 @@
-# Terraform Module for Citrix Published Applications
+# Terraform Module: Citrix DaaS Published Applications
 
-**Note**: This project is intended for testing purposes only. Please do not use it for deploying production infrastructure.
+[![Terraform Registry](https://img.shields.io/badge/terraform-registry-623CE4?logo=terraform)](https://registry.terraform.io/modules/abraxas-labs/citrix-daas-published-applications/citrixdaas)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Welcome to the Terraform module for creating and managing Citrix Published Applications! This module is designed to simplify the deployment and management of Citrix Published Applications using Terraform. Whether you're a seasoned Terraform user or just getting started, our module makes it easy to integrate Citrix into your infrastructure as code (IaC) workflow.
+A production-ready Terraform module for creating and managing Citrix Published Applications in Citrix DaaS (Desktop as a Service).
 
-**Feedback**: If you enjoyed this tutorial, please give this repo a star by clicking the star button at the top right of this page.
+This module simplifies the deployment and management of Citrix Published Applications using Infrastructure as Code. Whether you're a seasoned Terraform user or just getting started, this module makes it easy to integrate Citrix into your IaC workflow.
+
+**Feedback**: If you enjoyed this module, please give this repo a star by clicking the star button at the top right of this page.
 
 **Error Handling and General Questions**:
 If you encounter an error during module execution or have a general question, please create a new issue at the following link: [GitHub Issues](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues).
@@ -12,229 +15,162 @@ If you encounter an error during module execution or have a general question, pl
 
 ## Features
 
-- **Easy to Use**: Simple and intuitive configuration for quick setup.
-- **Flexible**: Supports a wide range of Citrix configurations and use cases.
-- **Automated**: Streamlines the deployment and management of Citrix Published Applications.
-- **Scalable**: Handles small to large Citrix environments with ease.
+- 🚀 **Simple, declarative application publishing** - Minimal configuration required
+- 🔒 **Optional user/group visibility restrictions** - Control who sees the application
+- 🎨 **Custom application icon support** - Brand your applications
+- ✅ **Production-ready** - Used in enterprise environments
+- 📦 **Validated inputs** - Comprehensive validation rules prevent errors
+- 🔄 **Composable outputs** - Chain with other modules
 
-## Getting Started
+## Prerequisites
 
-To get started with this module, follow these steps:
+Before using this module, ensure you have:
 
-1. **Prerequisites**: Ensure you have the following prerequisites in place:
-   - **Terraform installed** (we recommend installing Terraform on Linux or WSL)
-   - **Citrix Cloud account**
-   - **Delivery Group**
-2. **Configuration**: Configure the module with the necessary Citrix parameters. Refer to the **Usage** section below for an example.
-3. **Initialization**: Run `terraform init` to initialize the module.
-4. **Apply Changes**: Run `terraform apply` to deploy the Citrix Published Applications.
+- **Terraform** >= 1.2 (we recommend installing on Linux or WSL)
+- **Citrix Cloud account** with DaaS service enabled
+- **Existing Citrix Delivery Group** where applications will be published
+- **Citrix Cloud API credentials**:
+  - Customer ID
+  - Client ID
+  - Client Secret
+  - [How to get API credentials](https://developer-docs.citrix.com/en-us/citrix-cloud/citrix-cloud-api-overview/get-started-with-citrix-cloud-apis.html)
+- **Application folder** in Citrix Cloud (e.g., "Production", "Applications")
 
-## Configuration
+## Quick Start
 
-1. **Install Terraform**: Download and install Terraform from the official Terraform website.
-2. **Configure Citrix API Access**: You’ll need API access to Citrix Cloud. Follow the steps in Step 2: Create an API Client and Set Environment Variables.
-3. **Set Environment Variables**: Set up these variables in your shell to enable Terraform access to Citrix resources.
-4. **Find Your Delivery Group Name**:
-   - Log into the Citrix Cloud Console and go to **DaaS > Manage > Delivery Groups**.
-   - Identify the Delivery Group name that will publish applications. Note this name exactly as it appears in Citrix, as it will be used in the `TF_VAR_citrix_deliverygroup_name` variable.
-5. **Choose Application Visibility Settings**:
-   - The `citrix_application_visibility` variable specifies who can access the application.
-   - By default, this is set to all users within the delivery group.
-   - To restrict access, you can specify particular users or Active Directory groups by their domain names. For example:
-     ```sh
-     export TF_VAR_citrix_application_visibility='["domain\\UserOrGroupName"]'
-     ```
-6. **Set All Required Variables in the Shell**:
-   - After confirming the delivery group name and visibility settings, set the environment variables in your shell as follows:
-     ```sh
-     export TF_VAR_client_id="your_client_id"
-     export TF_VAR_client_secret="your_client_secret"
-     export TF_VAR_customer_id="your_customer_id"
-     export TF_VAR_citrix_deliverygroup_name='["YourDeliveryGroupName"]'
-     export TF_VAR_citrix_application_visibility='["domain\\UserOrGroupName"]' # Adjust as needed
-     ```
+### 1. Configure Citrix Provider
 
-## Usage
+Create a `terraform.tf` file:
 
-Create TF Files
-Create two files: `main.tf` and `customer.auto.tfvars`. In the `customer.auto.tfvars` file, you can adjust the values as needed.
-
-<details>
-<summary>Create TF Files</summary>
-<br>
-This is how you dropdown.
-
-
-**main.tf**:
 ```hcl
 terraform {
-  required_version = ">=1.2"
+  required_version = ">= 1.2"
   required_providers {
     citrix = {
       source  = "citrix/citrix"
-      version = "=1.0.7"
+      version = "~> 1.0.7"
     }
   }
 }
 
-# This block specifies the Citrix Provider configuration.
 provider "citrix" {
   cvad_config = {
-    customer_id   = var.customer_id
-    client_id     = var.client_id
-    client_secret = var.client_secret
+    customer_id   = var.citrix_customer_id
+    client_id     = var.citrix_client_id
+    client_secret = var.citrix_client_secret
   }
 }
+```
 
-###############################################################################
-# Data Sources
-###############################################################################
+### 2. Use the Module
 
-data "citrix_delivery_group" "example_delivery_group" {
-  name = var.citrix_deliverygroup_name[0]
-}
+Create a `main.tf` file:
 
-resource "citrix_admin_folder" "example_admin_folder_1" {
-  name = var.mandant_prefix
-  type = ["ContainsApplications"]
-}
-
-###############################################################################
-# Resources
-###############################################################################
-
-module "citrix-daas-published-applications" {
+```hcl
+module "calculator" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "0.5.7"
-  citrix_application_name                    = var.citrix_application_name
-  citrix_application_description             = var.citrix_application_description
-  citrix_application_published_name          = var.citrix_application_published_name
-  citrix_application_command_line_arguments  = "“%**”"
-  citrix_application_command_line_executable = var.citrix_application_command_line_executable
+  version = "~> 0.6"
+
+  citrix_application_name                    = "calculator-app"
+  citrix_application_published_name          = "Calculator"
+  citrix_application_description             = "Windows Calculator Application"
+  citrix_application_command_line_executable = "C:\\Windows\\system32\\calc.exe"
+  citrix_application_command_line_arguments  = ""
   citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
-  citrix_application_folder_path             = citrix_admin_folder.example_admin_folder_1.path
-  citrix_deliverygroup_name                  = data.citrix_delivery_group.example_delivery_group.name
-  # Optional parameters
-  #citrix_application_visibility              = var.citrix_application_visibility
-  #citrix_application_icon                    = citrix_application_icon.example_application_icon.id
-
+  citrix_application_folder_path             = "Production"
+  citrix_deliverygroup_name                  = "Production-DG"
 }
 
-
-resource "citrix_application_icon" "example_application_icon" {
-  raw_data = filebase64("${path.module}/${var.icon_path}")
-}
-
-###############################################################################
-# Variables
-###############################################################################
-
-variable "client_id" {
-  description = <<-EOF
-  Please enter the The Citrix Cloud Client id. Example: 12345678-1234-1234-1234-123456789012
-  Link https://developer-docs.citrix.com/en-us/citrix-cloud/citrix-cloud-api-overview/get-started-with-citrix-cloud-apis.html
-  EOF
-  type        = string
-}
-
-variable "client_secret" {
-  description = <<-EOF
-  Please enter the The Citrix Cloud Client secret. Example: xxxxxxx-xxxxxxx==
-  Link https://developer-docs.citrix.com/en-us/citrix-cloud/citrix-cloud-api-overview/get-started-with-citrix-cloud-apis.html
-  EOF
-  type        = string
-  sensitive   = true
-}
-
-variable "customer_id" {
-  description = <<-EOF
-  Please enter The Citrix Cloud customer id. Example: xxxxxxxx
-  Link https://developer-docs.citrix.com/en-us/citrix-cloud/citrix-cloud-api-overview/get-started-with-citrix-cloud-apis.html
-  EOF
-  type        = string
-}
-
-variable "citrix_application_visibility" {
-  description = <<-EOF
-  Please enter Users or group . Example: ["domain\\UserOrGroupName"]
-  By default, the application is visible to all users within a delivery group. However, you can restrict its visibility to only certain users by specifying them in the limit_visibility_to_users list.
-  EOF
-  type        = list(string)
-  default     = []
-}
-
-variable "citrix_deliverygroup_name" {
-  description = <<-EOF
-  Please enter the Name of the delivery group. Example: ["DG-A-Test"]
-  EOF
-  type        = list(string)
-}
-
-variable "citrix_application_name" {
-  description = "The name of the application"
-  type        = string
-}
-
-variable "citrix_application_description" {
-  description = "Application Description"
-  type        = string
-}
-
-variable "citrix_application_published_name" {
-  description = "The name of the application"
-  type        = string
-}
-
-variable "citrix_application_command_line_executable" {
-  description = "The command line executable"
-  type        = string
-}
-
-variable "icon_path" {
-  description = "Please enter the Path to the icon"
-  type        = string
-  default     = "/icons/citrix.ico"
-}
-
-variable "mandant_prefix" {
-  description = "please enter the Customer name"
-  type        = string
+output "application_name" {
+  value = module.calculator.citrix_published_application_name
 }
 ```
 
+### 3. Deploy
 
-customer.auto.tfvars
-```hcl
-mandant_prefix                             = "Customer A"
-citrix_application_name                    = "Calc Citrix Terraform 💡 Innovator 🎬 Showcase"
-citrix_application_published_name          = "Calc Citrix-Terraform_Showcase"
-citrix_application_description             = "Experience the future of application delivery with our innovative demo that combines the power of Citrix and Terraform. These showcase apps demonstrate how you can create and manage Citrix environments efficiently and automatically with Terraform."
-citrix_application_command_line_executable = "C:\\Windows\\system32\\calc.exe"
-icon_path                                  = "icons/citrix.ico"
-```
-
-</details>
-
-
-## Next Steps
-### Initialize Terraform: Run
-```hcl
-terraform init.
-```
-
-### Plan and Apply Terraform Configuration:
-```hcl
+```bash
+terraform init
 terraform plan
+terraform apply
 ```
 
+## Advanced Configuration
+
+### Restricting Application Visibility
+
+By default, applications are visible to all users in the delivery group. To restrict access to specific AD users or groups:
+
 ```hcl
-terraform apply -auto-approve
+module "excel_restricted" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "~> 0.6"
+
+  citrix_application_name                    = "excel-app"
+  citrix_application_published_name          = "Microsoft Excel"
+  citrix_application_description             = "Excel for Finance Team"
+  citrix_application_command_line_executable = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE"
+  citrix_application_command_line_arguments  = ""
+  citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
+  citrix_application_folder_path             = "Production"
+  citrix_deliverygroup_name                  = "Production-DG"
+
+  # Restrict to specific AD groups and users
+  citrix_application_visibility = [
+    "CONTOSO\\Finance-Users",
+    "CONTOSO\\john.doe"
+  ]
+}
 ```
 
-## Destroy Terraform Resources:
+### Adding Custom Application Icon
 
 ```hcl
-terraform destroy -auto-approve
+# Create the icon resource
+resource "citrix_application_icon" "custom_icon" {
+  raw_data = filebase64("${path.module}/icons/app.ico")
+}
+
+# Use the icon in your application
+module "app_with_icon" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "~> 0.6"
+
+  citrix_application_name                    = "notepad-app"
+  citrix_application_published_name          = "Notepad"
+  citrix_application_description             = "Text Editor"
+  citrix_application_command_line_executable = "C:\\Windows\\system32\\notepad.exe"
+  citrix_application_command_line_arguments  = ""
+  citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
+  citrix_application_folder_path             = "Production"
+  citrix_deliverygroup_name                  = "Production-DG"
+
+  # Use custom icon
+  citrix_application_icon = citrix_application_icon.custom_icon.id
+}
+```
+
+## Examples
+
+See the [examples/](examples/) directory for complete working examples:
+
+- **[basic/](examples/basic/)** - Minimal configuration (Calculator app)
+- **[with-icon/](examples/with-icon/)** - Custom application icon (Notepad)
+- **[restricted/](examples/restricted/)** - AD user/group restrictions (Excel)
+
+## Outputs
+
+This module provides several outputs for integration with other modules:
+
+```hcl
+output "application_info" {
+  value = {
+    id             = module.calculator.application_id
+    name           = module.calculator.citrix_published_application_name
+    published_name = module.calculator.application_published_name
+    folder_path    = module.calculator.application_folder_path
+    delivery_group = module.calculator.delivery_group_name
+  }
+}
 ```
 
 ## Contributing
