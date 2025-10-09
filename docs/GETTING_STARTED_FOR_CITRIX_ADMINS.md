@@ -483,6 +483,34 @@ terraform apply
 
 ---
 
+#### Command 4: Destroy Application (Optional)
+
+**⚠️ Use this only if you want to delete the application from Citrix Cloud**
+
+```bash
+terraform destroy
+```
+
+**What happens?** Terraform deletes the Published Application from Citrix Cloud.
+
+**Confirmation Required**: Terraform asks: `Do you really want to destroy all resources?`
+- Type **`yes`** and press **Enter** to confirm deletion
+- Type **`no`** or press **Ctrl+C** to cancel
+
+**Expected Output**:
+```
+Destroy complete! Resources: 1 destroyed.
+```
+
+**When to use this**:
+- Testing: Clean up test applications after learning
+- Mistakes: Remove incorrectly configured applications
+- Cleanup: Delete applications you no longer need
+
+**⚠️ Warning**: This permanently deletes the application. Make sure you selected the correct application before confirming!
+
+---
+
 ### Step 5: Verify in Citrix Cloud
 
 1. Log into **Citrix Cloud**: [https://citrix.cloud.com](https://citrix.cloud.com)
