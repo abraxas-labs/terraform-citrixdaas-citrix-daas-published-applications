@@ -19,11 +19,10 @@
 - [Getting Started: Your First Published Application](#getting-started-your-first-published-application)
   - [Step 1: Create Your Project Folder](#step-1-create-your-project-folder)
   - [Step 2: Configure Citrix Connection](#step-2-configure-citrix-connection)
-  - [Step 3: Define Your Application](#step-3-define-your-application)
-  - [Step 4: Field Mapping Reference](#step-4-field-mapping-reference)
-  - [Step 5: Deploy Your Application](#step-5-deploy-your-application)
-  - [Step 6: Verify in Citrix Cloud](#step-6-verify-in-citrix-cloud)
-  - [Step 7: Securely Store Credentials](#step-7-securely-store-credentials)
+  - [Step 3: Field Mapping Reference](#step-3-field-mapping-reference)
+  - [Step 4: Deploy Your Application](#step-4-deploy-your-application)
+  - [Step 5: Verify in Citrix Cloud](#step-5-verify-in-citrix-cloud)
+  - [Step 6: Securely Store Credentials](#step-6-securely-store-credentials)
 - [Troubleshooting for Beginners](#troubleshooting-for-beginners)
 - [Next Steps: Becoming More Advanced](#next-steps-becoming-more-advanced)
 - [FAQ for Citrix Administrators](#faq-for-citrix-administrators)
@@ -258,7 +257,16 @@ cd my-citrix-apps
 
 ### Step 2: Configure Citrix Connection
 
-Create a file named `terraform.tf`:
+In this step, you'll create 3 files: `terraform.tf`, `variables.tf`, and `main.tf`.
+
+**How to create files**:
+- Open your favorite editor: **Notepad** (Windows), **nano** (Linux/WSL), **vi/vim**, or **VS Code**
+- Copy the code blocks below and paste them into the corresponding files
+- Save each file in your `my-citrix-apps` directory
+
+---
+
+#### File 1: `terraform.tf`
 
 **What does this file do?**
 This file establishes the connection to Citrix Cloud (like logging into Citrix Studio).
@@ -286,7 +294,12 @@ provider "citrix" {
 }
 ```
 
-**Create a file named `variables.tf`:**
+---
+
+#### File 2: `variables.tf`
+
+**What does this file do?**
+Defines the input variables for API credentials (without storing the actual values).
 
 ```hcl
 # variables.tf
@@ -309,16 +322,9 @@ variable "citrix_client_secret" {
 }
 ```
 
-**How it works**:
-- Terraform automatically reads environment variables starting with `TF_VAR_`
-- You'll set these credentials in **Step 7** after deploying your first application
-- Terraform uses these values without storing them in code
-
 ---
 
-### Step 3: Define Your Application
-
-Create a file named `main.tf`:
+#### File 3: `main.tf`
 
 **What does this file do?**
 This file describes the Published Application you want to create (like filling out the "Create Application" form in Citrix Studio).
@@ -376,9 +382,24 @@ module "calculator" {
 }
 ```
 
+**✅ File Creation Summary**:
+
+You should now have 3 files in your `my-citrix-apps` directory:
+```
+my-citrix-apps/
+├── terraform.tf     (Citrix provider configuration)
+├── variables.tf     (Variable definitions)
+└── main.tf          (Application definition)
+```
+
+**How Terraform reads credentials**:
+- Terraform automatically reads environment variables starting with `TF_VAR_`
+- You'll set these credentials in **Step 7** after deploying your first application
+- This keeps credentials secure and out of your code
+
 ---
 
-### Step 4: Field Mapping Reference
+### Step 3: Field Mapping Reference
 
 Here's how Terraform variables map to Citrix Studio fields:
 
@@ -395,37 +416,66 @@ Here's how Terraform variables map to Citrix Studio fields:
 
 ---
 
-### Step 5: Deploy Your Application
+### Step 4: Deploy Your Application
 
-Now let's create the application in Citrix Cloud.
+Now let's deploy the application to Citrix Cloud using the command line.
 
+**Open your terminal/command line**:
+- **Windows (WSL)**: Open "Ubuntu" from Start Menu
+- **Windows (Native)**: Open "Command Prompt" or "PowerShell"
+- **macOS**: Open "Terminal" (Applications → Utilities → Terminal)
+- **Linux**: Open your terminal application
+
+**Navigate to your project folder**:
 ```bash
-# 1. Initialize Terraform (downloads the Citrix module)
+cd my-citrix-apps
+```
+
+**Run the following Terraform commands**:
+
+#### Command 1: Initialize Terraform
+```bash
 terraform init
 ```
 **What happens?** Terraform downloads the Citrix provider and this module from the Terraform Registry.
-**Output**: You'll see "Terraform has been successfully initialized!"
 
+**Expected Output**:
+```
+Initializing modules...
+Downloading abraxas-labs/citrix-daas-published-applications/citrixdaas...
+
+Terraform has been successfully initialized!
+```
+
+<!-- SCREENSHOT PLACEHOLDER: terraform init output -->
+
+---
+
+#### Command 2: Preview Changes (Dry Run)
 ```bash
-# 2. Preview Changes (NOTHING is created yet!)
 terraform plan
 ```
-**What happens?** Terraform shows you exactly what will be created—like a "preview" or "dry run".
-**Output**: You'll see something like:
+**What happens?** Terraform shows you exactly what will be created—like a "preview" or "dry run". **NOTHING is created yet!**
+
+**Expected Output**:
 ```
 Plan: 1 to add, 0 to change, 0 to destroy.
 ```
-**Read this output carefully!** It shows you what Terraform will create.
+
+**⚠️ Read this output carefully!** It shows you what Terraform will create.
 
 <!-- SCREENSHOT PLACEHOLDER: terraform plan output showing the application to be created -->
 
+---
+
+#### Command 3: Apply Changes (Deploy to Citrix Cloud)
 ```bash
-# 3. Apply Changes (Creates the application in Citrix Cloud)
 terraform apply
 ```
 **What happens?** Terraform creates the Published Application in Citrix Cloud.
+
 **Confirmation Required**: Terraform asks: `Do you want to perform these actions?`
-- Type `yes` and press Enter
+- Type **`yes`** and press **Enter**
 
 **⚠️ Important**: Only after you type `yes` will Terraform make changes to Citrix Cloud.
 
@@ -433,7 +483,7 @@ terraform apply
 
 ---
 
-### Step 6: Verify in Citrix Cloud
+### Step 5: Verify in Citrix Cloud
 
 1. Log into **Citrix Cloud**: [https://citrix.cloud.com](https://citrix.cloud.com)
 2. Navigate to: **Studio → Applications → Production** (your folder)
@@ -445,7 +495,7 @@ terraform apply
 
 ---
 
-### Step 7: Securely Store Credentials
+### Step 6: Securely Store Credentials
 
 **⚠️ IMPORTANT: Do NOT commit API credentials to Git or code files!**
 
