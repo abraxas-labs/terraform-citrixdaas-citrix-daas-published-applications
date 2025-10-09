@@ -1,11 +1,18 @@
 # Terraform Module: Citrix DaaS Published Applications
 
 [![Terraform Registry](https://img.shields.io/badge/terraform-registry-623CE4?logo=terraform)](https://registry.terraform.io/modules/abraxas-labs/citrix-daas-published-applications/citrixdaas)
+[![GitHub release](https://img.shields.io/github/v/release/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications)](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications)](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues)
+[![GitHub stars](https://img.shields.io/github/stars/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications?style=social)](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications)
 
 Terraform module for creating and managing Citrix Published Applications in Citrix DaaS (Desktop as a Service).
 
-> **New to Terraform?** Check out our [Getting Started Guide for Citrix Administrators](docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md) — a complete tutorial with step-by-step instructions, screenshots, and GUI comparisons.
+**Feedback**: If you enjoyed this module, please give this repo a star by clicking the star button at the top right of this page.
+
+**Error Handling and General Questions**: If you encounter an error during module execution or have a general question, please create a new issue at the following link: [GitHub Issues](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues).
+
+> **New to Terraform?** Check out our [Getting Started Guide for Citrix Administrators](docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md) — a complete tutorial with step-by-step instructions, screenshots, and GUI comparisons. Additional resources including advanced examples and troubleshooting can be found in the [Documentation](#documentation) section below.
 
 ## Usage
 
@@ -104,57 +111,7 @@ module "notepad" {
 }
 ```
 
-### Application with Visibility Restrictions
-
-Restrict application visibility to specific Active Directory users or groups:
-
-```hcl
-module "excel_finance" {
-  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 0.6"
-
-  citrix_application_name                    = "excel-finance"
-  citrix_application_published_name          = "Microsoft Excel"
-  citrix_application_description             = "Excel for Finance Team"
-  citrix_application_command_line_executable = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE"
-  citrix_application_command_line_arguments  = ""
-  citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
-  citrix_application_folder_path             = "Production"
-  citrix_deliverygroup_name                  = "Production-DG"
-
-  # Restrict to specific AD groups/users
-  citrix_application_visibility = [
-    "CONTOSO\\Finance-Users",
-    "CONTOSO\\john.doe"
-  ]
-}
-```
-
-### Application with Custom Icon
-
-```hcl
-resource "citrix_application_icon" "custom_icon" {
-  raw_data = filebase64("${path.module}/icons/app.ico")
-}
-
-module "app_with_icon" {
-  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 0.6"
-
-  citrix_application_name                    = "custom-app"
-  citrix_application_published_name          = "Custom Application"
-  citrix_application_description             = "Application with Custom Icon"
-  citrix_application_command_line_executable = "C:\\Program Files\\CustomApp\\app.exe"
-  citrix_application_command_line_arguments  = ""
-  citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
-  citrix_application_folder_path             = "Production"
-  citrix_deliverygroup_name                  = "Production-DG"
-
-  citrix_application_icon = citrix_application_icon.custom_icon.id
-}
-```
-
-For more examples, see:
+For more examples including visibility restrictions, custom icons, and bulk deployments, see:
 - [examples/](examples/) directory
 - [Advanced Examples Documentation](docs/EXAMPLES.md)
 
@@ -180,15 +137,13 @@ output "application_info" {
 - **[Advanced Examples](docs/EXAMPLES.md)** — Real-world scenarios and complex configurations
 - **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** — Common errors, solutions, and FAQ
 
-## Troubleshooting
+### Quick Troubleshooting
 
 | Error | Solution |
 |-------|----------|
 | `Delivery Group not found` | Ensure the Delivery Group exists in Citrix Cloud and the name matches exactly |
 | `Invalid API credentials` | Verify Customer ID, Client ID, and Secret; create new credentials if needed |
 | `Application folder path not found` | Create the folder in Citrix Studio before running `terraform apply` |
-
-See [Troubleshooting Guide](docs/TROUBLESHOOTING.md) for detailed solutions.
 
 ## Contributing
 
