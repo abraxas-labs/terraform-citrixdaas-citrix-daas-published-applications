@@ -8,27 +8,6 @@
 
 ---
 
-## Table of Contents
-
-- [What Is This? (GUI vs. Code Comparison)](#what-is-this-gui-vs-code-comparison)
-- [Why Should You Use This?](#why-should-you-use-this)
-- [Prerequisites: What You Need Before Starting](#prerequisites-what-you-need-before-starting)
-  - [1. Existing Citrix Infrastructure](#1-existing-citrix-infrastructure)
-  - [2. Citrix Cloud API Credentials](#2-citrix-cloud-api-credentials)
-  - [3. Install Terraform](#3-install-terraform)
-- [Getting Started: Your First Published Application](#getting-started-your-first-published-application)
-  - [Step 1: Create Your Project Folder](#step-1-create-your-project-folder)
-  - [Step 2: Configure Citrix Connection](#step-2-configure-citrix-connection)
-  - [Step 3: Define Your Application](#step-3-define-your-application)
-  - [Step 4: Field Mapping Reference](#step-4-field-mapping-reference)
-  - [Step 5: Deploy Your Application](#step-5-deploy-your-application)
-  - [Step 6: Verify in Citrix Cloud](#step-6-verify-in-citrix-cloud)
-  - [Step 7: Securely Store Credentials](#step-7-securely-store-credentials)
-- [Troubleshooting for Beginners](#troubleshooting-for-beginners)
-- [Next Steps: Becoming More Advanced](#next-steps-becoming-more-advanced)
-- [FAQ for Citrix Administrators](#faq-for-citrix-administrators)
-- [Additional Resources](#additional-resources)
-
 ---
 
 ## What Is This? (GUI vs. Code Comparison)
@@ -143,11 +122,57 @@ You need API credentials to allow Terraform to connect to Citrix Cloud.
 
 ---
 
+**Step 5: Securely Store Credentials (DO NOT commit to Git!)**
+
+After creating your API credentials in Citrix Cloud, store them securely using **environment variables** instead of hardcoding them in files.
+
+**⚠️ Critical Security Practice**: Never store credentials in Git repositories or code files!
+
+**For Linux/WSL Users** (Recommended):
+
+Open your terminal and set the credentials as environment variables:
+
+```bash
+# Set Citrix API credentials as environment variables
+export TF_VAR_client_id="your-client-id-here"
+export TF_VAR_client_secret="your-client-secret-here"
+export TF_VAR_customer_id="your-customer-id-here"
+
+# Verify they're set (optional)
+echo $TF_VAR_client_id
+```
+
+**For Windows PowerShell Users**:
+
+Open PowerShell and set the credentials:
+
+```powershell
+# Set Citrix API credentials as environment variables
+$env:TF_VAR_client_id="your-client-id-here"
+$env:TF_VAR_client_secret="your-client-secret-here"
+$env:TF_VAR_customer_id="your-customer-id-here"
+
+# Verify they're set (optional)
+echo $env:TF_VAR_client_id
+```
+
+> **Note**: These environment variables are temporary and only last for the current terminal session. For permanent storage, you can add them to:
+> - **Linux/WSL**: `~/.bashrc` or `~/.zshrc`
+> - **Windows**: System Environment Variables (Start → "Environment Variables")
+
+**Why use environment variables?**
+- ✅ Credentials never appear in code or Git history
+- ✅ Easy to rotate/update without changing code
+- ✅ Different credentials per environment (Dev/Test/Prod)
+- ✅ Industry standard security practice
+
+---
+
 ### 3. Install Terraform
 
 Terraform is the tool that reads your configuration files and creates resources in Citrix Cloud.
 
-#### **For Windows Users** (Most Citrix Admins):
+**For Windows Users** (Most Citrix Admins):
 
 We **strongly recommend** using **WSL2** (Windows Subsystem for Linux) instead of Windows-native Terraform:
 - ✅ Better compatibility with Terraform tools
@@ -191,54 +216,6 @@ choco install terraform
 Or download manually from the official HashiCorp website:
 - [Terraform Installation Guide](https://developer.hashicorp.com/terraform/install)
 - [Direct Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
-
----
-
-#### **For macOS Users**:
-
-**Option A: Install with Homebrew (Recommended)**
-
-```bash
-# Install Homebrew (if not already installed)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install Terraform
-brew tap hashicorp/tap
-brew install hashicorp/tap/terraform
-
-# Verify installation
-terraform --version
-# Should output: Terraform v1.13.3
-```
-
-**Option B: Manual Installation**
-
-1. Download Terraform for macOS from [HashiCorp Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
-2. Unzip and move to `/usr/local/bin/`:
-   ```bash
-   unzip terraform_1.13.3_darwin_amd64.zip
-   sudo mv terraform /usr/local/bin/
-   terraform --version
-   ```
-
-**Detailed Installation Guide**: [HashiCorp Terraform CLI Installation](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
-
----
-
-#### **For Linux Users**:
-
-```bash
-# Download Terraform 1.13.3
-wget https://releases.hashicorp.com/terraform/1.13.3/terraform_1.13.3_linux_amd64.zip
-
-# Unzip and install
-unzip terraform_1.13.3_linux_amd64.zip
-sudo mv terraform /usr/local/bin/
-
-# Verify installation
-terraform --version
-# Should output: Terraform v1.13.3
-```
 
 ---
 
@@ -311,8 +288,10 @@ variable "citrix_client_secret" {
 
 **How it works**:
 - Terraform automatically reads environment variables starting with `TF_VAR_`
-- You'll set these credentials in **Step 7** after deploying your first application
+- You set `export TF_VAR_client_id="..."` (Linux/WSL) or `$env:TF_VAR_client_id="..."` (PowerShell)
 - Terraform uses these values without storing them in code
+
+**✅ Security Best Practice**: Credentials are now stored in environment variables (set in Step 5 of Prerequisites), NOT in your code files!
 
 ---
 
@@ -445,63 +424,204 @@ terraform apply
 
 ---
 
-### Step 7: Securely Store Credentials
+## Common Scenarios: Real-World Examples
 
-**⚠️ IMPORTANT: Do NOT commit API credentials to Git or code files!**
+### Scenario A: Restrict Application Visibility to Specific Users/Groups
 
-Now that you've deployed your first application, let's properly secure your API credentials using **environment variables**.
+**Use Case**: You want to publish Microsoft Excel, but only the Finance team should see it.
 
-After creating your API credentials in Citrix Cloud (Prerequisites Step 2), store them securely:
+**GUI Equivalent**: Application Properties → Limit Visibility → Add Users/Groups
 
-**For Linux/WSL Users**:
+<!-- SCREENSHOT PLACEHOLDER: Citrix Studio "Limit Visibility to Users" dialog -->
 
-Open your terminal and set the credentials as environment variables:
+**Code**:
+```hcl
+module "excel_finance" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "~> 0.6"
 
-```bash
-# Set Citrix API credentials as environment variables
-export TF_VAR_client_id="your-client-id-here"
-export TF_VAR_client_secret="your-client-secret-here"
-export TF_VAR_customer_id="your-customer-id-here"
+  citrix_application_name                    = "excel-finance"
+  citrix_application_published_name          = "Microsoft Excel"
+  citrix_application_description             = "Excel for Finance Team Only"
+  citrix_application_command_line_executable = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE"
+  citrix_application_command_line_arguments  = ""
+  citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
+  citrix_application_folder_path             = "Production"
+  citrix_deliverygroup_name                  = "Production-DG"
 
-# Verify they're set (optional)
-echo $TF_VAR_client_id
+  # 🔒 Restrict visibility to specific AD groups/users
+  citrix_application_visibility = [
+    "CONTOSO\\Finance-Users",      # AD Group
+    "CONTOSO\\john.doe"            # Individual User
+  ]
+}
 ```
 
-**For Windows PowerShell Users**:
+**Format Rules**:
+- Use `DOMAIN\\Username` or `DOMAIN\\GroupName`
+- Double backslash (`\\`) is required
+- Users/groups must exist in Active Directory and be synced to Citrix Cloud
 
-Open PowerShell and set the credentials:
+---
 
-```powershell
-# Set Citrix API credentials as environment variables
-$env:TF_VAR_client_id="your-client-id-here"
-$env:TF_VAR_client_secret="your-client-secret-here"
-$env:TF_VAR_customer_id="your-customer-id-here"
+### Scenario B: Add a Custom Application Icon
 
-# Verify they're set (optional)
-echo $env:TF_VAR_client_id
+**Use Case**: You want to brand your application with a custom icon.
+
+**GUI Equivalent**: Application Properties → Icon → Upload Icon
+
+<!-- SCREENSHOT PLACEHOLDER: Citrix Studio "Change Icon" dialog -->
+
+**Prerequisites**:
+- You have a `.ico` file (e.g., `app-icon.ico`)
+- Place the icon in your project folder
+
+**Code**:
+```hcl
+# Step 1: Create the icon resource
+resource "citrix_application_icon" "custom_icon" {
+  raw_data = filebase64("${path.module}/icons/app-icon.ico")
+  # ↑ Reads the .ico file and converts it to base64
+}
+
+# Step 2: Reference the icon in your application
+module "notepad_custom_icon" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "~> 0.6"
+
+  citrix_application_name                    = "notepad-app"
+  citrix_application_published_name          = "Notepad"
+  citrix_application_description             = "Text Editor with Custom Icon"
+  citrix_application_command_line_executable = "C:\\Windows\\system32\\notepad.exe"
+  citrix_application_command_line_arguments  = ""
+  citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
+  citrix_application_folder_path             = "Production"
+  citrix_deliverygroup_name                  = "Production-DG"
+
+  # 🎨 Use the custom icon
+  citrix_application_icon = citrix_application_icon.custom_icon.id
+}
 ```
 
-**For macOS Users**:
-
-```bash
-# Set Citrix API credentials as environment variables (same as Linux)
-export TF_VAR_client_id="your-client-id-here"
-export TF_VAR_client_secret="your-client-secret-here"
-export TF_VAR_customer_id="your-customer-id-here"
-
-# Verify they're set (optional)
-echo $TF_VAR_client_id
+**Project Structure**:
+```
+my-citrix-apps/
+├── terraform.tf
+├── main.tf
+└── icons/
+    └── app-icon.ico    ← Your custom icon file
 ```
 
-> **Note**: These environment variables are temporary and only last for the current terminal session. For permanent storage, you can add them to:
-> - **Linux/WSL/macOS**: `~/.bashrc`, `~/.zshrc`, or `~/.bash_profile`
-> - **Windows**: System Environment Variables (Start → "Environment Variables")
+---
 
-**Why use environment variables?**
-- ✅ Credentials never appear in code or Git history
-- ✅ Easy to rotate/update without changing code
-- ✅ Different credentials per environment (Dev/Test/Prod)
-- ✅ Industry standard security practice
+### Scenario C: Deploy 10 Applications at Once
+
+**Use Case**: You need to publish 10 different applications (Word, Excel, PowerPoint, etc.)
+
+**GUI**: Fill out the "Create Application" form 10 times (~50 minutes)
+
+**Code**: Copy-paste the module block 10 times, change the values (~5 minutes)
+
+**Example** (`main.tf`):
+```hcl
+# Application 1: Calculator
+module "calculator" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "~> 0.6"
+
+  citrix_application_name                    = "calculator"
+  citrix_application_published_name          = "Calculator"
+  citrix_application_command_line_executable = "C:\\Windows\\system32\\calc.exe"
+  citrix_application_folder_path             = "Production"
+  citrix_deliverygroup_name                  = "Production-DG"
+}
+
+# Application 2: Notepad
+module "notepad" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "~> 0.6"
+
+  citrix_application_name                    = "notepad"
+  citrix_application_published_name          = "Notepad"
+  citrix_application_command_line_executable = "C:\\Windows\\system32\\notepad.exe"
+  citrix_application_folder_path             = "Production"
+  citrix_deliverygroup_name                  = "Production-DG"
+}
+
+# Application 3: Microsoft Word
+module "word" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "~> 0.6"
+
+  citrix_application_name                    = "word"
+  citrix_application_published_name          = "Microsoft Word"
+  citrix_application_command_line_executable = "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE"
+  citrix_application_folder_path             = "Production"
+  citrix_deliverygroup_name                  = "Production-DG"
+}
+
+# ... repeat for Excel, PowerPoint, etc.
+```
+
+**Result**: Run `terraform apply` once → all 10 applications created simultaneously.
+
+---
+
+## Securing Your Credentials
+
+**⚠️ Never commit API credentials to Git or share them publicly!**
+
+### Method 1: Environment Variables (Recommended)
+
+**Step 1**: Remove credentials from `terraform.tf`:
+```hcl
+# terraform.tf
+provider "citrix" {
+  cvad_config = {
+    customer_id   = var.citrix_customer_id
+    client_id     = var.citrix_client_id
+    client_secret = var.citrix_client_secret
+  }
+}
+```
+
+**Step 2**: Create `variables.tf`:
+```hcl
+# variables.tf
+variable "citrix_customer_id" {
+  description = "Citrix Cloud Customer ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "citrix_client_id" {
+  description = "Citrix Cloud Client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "citrix_client_secret" {
+  description = "Citrix Cloud Client Secret"
+  type        = string
+  sensitive   = true
+}
+```
+
+**Step 3**: Create `terraform.tfvars` (local file, NOT committed to Git):
+```hcl
+# terraform.tfvars
+citrix_customer_id   = "your-customer-id"
+citrix_client_id     = "your-client-id"
+citrix_client_secret = "your-client-secret"
+```
+
+**Step 4**: Add to `.gitignore`:
+```
+# .gitignore
+*.tfvars
+.terraform/
+terraform.tfstate*
+```
 
 ---
 
@@ -512,14 +632,12 @@ echo $TF_VAR_client_id
 | Error Message | What It Means | Solution |
 |---------------|---------------|----------|
 | `Error: Delivery Group "Production-DG" not found` | The Delivery Group doesn't exist in Citrix Cloud | 1. Log into Citrix Studio<br>2. Check Delivery Groups list<br>3. Update `citrix_deliverygroup_name` with the correct name |
-| `Error: Invalid API credentials` | Customer ID, Client ID, or Secret is incorrect | 1. Go to Citrix Cloud → API Access<br>2. Create new credentials<br>3. Update environment variables (Step 7) |
+| `Error: Invalid API credentials` | Customer ID, Client ID, or Secret is incorrect | 1. Go to Citrix Cloud → API Access<br>2. Create new credentials<br>3. Update `terraform.tf` |
 | `Error: Application folder path "Production" not found` | The folder doesn't exist in Citrix Studio | 1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply` |
 | `Error: Failed to query provider` | Citrix provider version issue | Run `terraform init -upgrade` |
 | `Error: citrix_application_command_line_executable: invalid value` | Executable path has invalid format | Use double backslashes: `C:\\Windows\\system32\\calc.exe` |
 
 <!-- SCREENSHOT PLACEHOLDER: Example error output in terminal with solution highlighted -->
-
-**For detailed troubleshooting**, see [Troubleshooting Guide](TROUBLESHOOTING.md).
 
 ---
 
@@ -545,32 +663,21 @@ terraform apply
 
 ## Next Steps: Becoming More Advanced
 
-### 1. Explore Advanced Examples
-
-See real-world scenarios including:
-- **Visibility Restrictions**: Limit apps to specific AD groups/users
-- **Custom Icons**: Brand applications with company logos
-- **Bulk Deployment**: Deploy 10+ applications simultaneously
-- **Multi-Environment**: Manage Dev/Test/Prod with workspaces
-
-**👉 [View Advanced Examples](EXAMPLES.md)**
-
----
-
-### 2. Learn Git Basics (Version Control)
+### 1. Learn Git Basics (Version Control)
 Track your Terraform configurations over time:
 - [Git for Beginners](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control)
 - Why? Rollback changes, collaborate with team, audit trail
 
----
+### 2. Explore the Examples Folder
+See more complex scenarios:
+- [examples/](examples/) directory in this repository
+- Each example includes detailed comments
 
 ### 3. Best Practices for Citrix Admins
 - **Naming Conventions**: Use consistent naming (e.g., `app-name-environment`)
 - **Folder Structure**: Organize by environment (Dev/Test/Prod) or department
 - **Testing**: Always test in a non-production Delivery Group first
 - **Documentation**: Comment your code (future you will thank you!)
-
----
 
 ### 4. Advanced Terraform Concepts (Optional)
 - **Workspaces**: Manage multiple environments (Dev/Test/Prod)
@@ -666,10 +773,11 @@ Terraform will ask: `Do you want to destroy these resources?`
 - [Citrix Cloud API Documentation](https://developer-docs.citrix.com/)
 - [Citrix Terraform Provider](https://registry.terraform.io/providers/citrix/citrix/latest/docs)
 
-### Related Documentation
-- **[Main README](../README.md)** — Quick start and module reference
-- **[Advanced Examples](EXAMPLES.md)** — Real-world scenarios (visibility, icons, bulk deployment)
-- **[Troubleshooting Guide](TROUBLESHOOTING.md)** — Detailed error solutions and debugging
+### Example Configurations
+- See [examples/](examples/) for complete working examples:
+  - Basic application deployment
+  - Applications with custom icons
+  - Applications with visibility restrictions
 
 ---
 
@@ -688,7 +796,7 @@ Contributions are welcome! If you're a Citrix Admin who found this module useful
 
 ## License
 
-This module is licensed under the MIT License. See [LICENSE](../LICENSE) for details.
+This module is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
@@ -698,3 +806,61 @@ This module is licensed under the MIT License. See [LICENSE](../LICENSE) for det
 - ⭐ Star this repository (click the star button at the top-right)
 - Share with other Citrix Administrators
 - Open an issue if you have questions or suggestions
+
+---
+
+# Technical Reference (Auto-Generated)
+
+> **Note**: The section below is auto-generated documentation for advanced users. If you're new to Terraform, you can safely skip this section.
+
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2 |
+| <a name="requirement_citrix"></a> [citrix](#requirement\_citrix) | >= 1.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_citrix"></a> [citrix](#provider\_citrix) | 1.0.28 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [citrix_application.published_application](https://registry.terraform.io/providers/citrix/citrix/latest/docs/resources/application) | resource |
+| [citrix_delivery_group.this](https://registry.terraform.io/providers/citrix/citrix/latest/docs/data-sources/delivery_group) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_citrix_application_command_line_arguments"></a> [citrix\_application\_command\_line\_arguments](#input\_citrix\_application\_command\_line\_arguments) | Command line arguments passed to the executable when launched. Use empty string if no arguments needed.<br>Special patterns supported by Citrix:<br>  - "" (empty string): No arguments<br>  - "%%**": Pass user-specified parameters from Citrix Workspace<br>  - "/c %%**": Command interpreter with user parameters<br>  - "-file document.docx": Static arguments<br>Example: "" or "%%**" or "-openfile" | `string` | `""` | no |
+| <a name="input_citrix_application_command_line_executable"></a> [citrix\_application\_command\_line\_executable](#input\_citrix\_application\_command\_line\_executable) | The full Windows path to the application executable on the VDA (Virtual Delivery Agent).<br>Must be a valid Windows path format with backslashes.<br>Examples:<br>  - "C:\\Windows\\system32\\calc.exe"<br>  - "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE"<br>  - "C:\\Program Files (x86)\\Application\\app.exe" | `string` | n/a | yes |
+| <a name="input_citrix_application_description"></a> [citrix\_application\_description](#input\_citrix\_application\_description) | A detailed description of the application. This is displayed to users in Citrix Workspace.<br>Example: "Microsoft Word 2021 - Document editing and creation" | `string` | n/a | yes |
+| <a name="input_citrix_application_folder_path"></a> [citrix\_application\_folder\_path](#input\_citrix\_application\_folder\_path) | Citrix admin folder path where the application will be organized.<br>The folder must exist in Citrix Cloud before creating the application.<br>Use folder name without leading/trailing slashes.<br>Examples:<br>  - "Production" (single level)<br>  - "Production/Microsoft Office" (nested)<br>  - "Test/Utilities" (nested) | `string` | n/a | yes |
+| <a name="input_citrix_application_icon"></a> [citrix\_application\_icon](#input\_citrix\_application\_icon) | Optional: The ID of a citrix\_application\_icon resource to use as the application icon.<br>If not provided (empty string), Citrix will use a default icon.<br>Example: citrix\_application\_icon.my\_icon.id<br>Note: Create the icon resource separately using citrix\_application\_icon. | `string` | `""` | no |
+| <a name="input_citrix_application_name"></a> [citrix\_application\_name](#input\_citrix\_application\_name) | The internal name of the Citrix application. This name is used for identification<br>within Citrix Cloud and must be unique within your environment.<br>Example: "microsoft-word-2021" or "calculator-app" | `string` | n/a | yes |
+| <a name="input_citrix_application_published_name"></a> [citrix\_application\_published\_name](#input\_citrix\_application\_published\_name) | The display name shown to end users in Citrix Workspace. This can be different<br>from the internal application name and can contain spaces and special characters.<br>Example: "Microsoft Word 2021" or "Calculator" | `string` | n/a | yes |
+| <a name="input_citrix_application_visibility"></a> [citrix\_application\_visibility](#input\_citrix\_application\_visibility) | Optional list of Active Directory users or groups that can see this application.<br>If empty (default), the application is visible to all users in the delivery group.<br>Format: Use domain\\username or domain\\groupname with double backslashes.<br>Examples:<br>  - [] (visible to all users - default)<br>  - ["CONTOSO\\Finance-Users"] (single AD group)<br>  - ["CONTOSO\\Finance-Users", "CONTOSO\\john.doe"] (multiple entries)<br>Note: Users/groups must exist in Active Directory and be synced to Citrix Cloud. | `list(string)` | `[]` | no |
+| <a name="input_citrix_application_working_directory"></a> [citrix\_application\_working\_directory](#input\_citrix\_application\_working\_directory) | The working directory for the application. Can use Windows environment variables.<br>Common values:<br>  - "%%HOMEDRIVE%%%%HOMEPATH%%" (recommended): User's home directory<br>  - "%%USERPROFILE%%": User's profile directory<br>  - "%%USERPROFILE%%\\Documents": User's Documents folder<br>  - "%%USERPROFILE%%\\Desktop": User's Desktop<br>  - "C:\\Temp": Fixed location<br>Example: "%%HOMEDRIVE%%%%HOMEPATH%%" | `string` | `"%HOMEDRIVE%%HOMEPATH%"` | no |
+| <a name="input_citrix_deliverygroup_name"></a> [citrix\_deliverygroup\_name](#input\_citrix\_deliverygroup\_name) | Name of an existing Citrix Delivery Group that will host this application.<br>The delivery group must exist before creating the application.<br>Example: "Production-Windows-DG" or "Test-Delivery-Group" | `string` | n/a | yes |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_application_folder_path"></a> [application\_folder\_path](#output\_application\_folder\_path) | The folder path where the application is organized in Citrix Cloud |
+| <a name="output_application_id"></a> [application\_id](#output\_application\_id) | The unique identifier of the published application |
+| <a name="output_application_published_name"></a> [application\_published\_name](#output\_application\_published\_name) | The display name shown to end users in Citrix Workspace |
+| <a name="output_citrix_published_application_name"></a> [citrix\_published\_application\_name](#output\_citrix\_published\_application\_name) | The internal name of the published Citrix application |
+| <a name="output_delivery_group_id"></a> [delivery\_group\_id](#output\_delivery\_group\_id) | The unique identifier of the delivery group |
+| <a name="output_delivery_group_name"></a> [delivery\_group\_name](#output\_delivery\_group\_name) | The name of the delivery group hosting the application |
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
