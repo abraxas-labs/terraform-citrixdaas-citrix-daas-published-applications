@@ -7,8 +7,12 @@
 *.tfstate.*
 *.exe
 .gitlab-ci copy.yml
-
-
+CHANGELOG*
+.pre-commit-config.yaml
+archive
+.gitlab*
+*claude*
+CLAUDE.md
 # Crash log files
 crash.log
 
