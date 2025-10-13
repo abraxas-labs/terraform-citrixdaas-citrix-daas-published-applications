@@ -20,9 +20,9 @@
   - [Step 1: Create Your Project Folder](#step-1-create-your-project-folder)
   - [Step 2: Configure Citrix Connection](#step-2-configure-citrix-connection)
   - [Step 3: Field Mapping Reference](#step-3-field-mapping-reference)
-  - [Step 4: Deploy Your Application](#step-4-deploy-your-application)
-  - [Step 5: Verify in Citrix Cloud](#step-5-verify-in-citrix-cloud)
-  - [Step 6: Securely Store Credentials](#step-6-securely-store-credentials)
+  - [Step 4: Set API Credentials](#step-4-set-api-credentials)
+  - [Step 5: Deploy Your Application](#step-5-deploy-your-application)
+  - [Step 6: Verify in Citrix Cloud](#step-6-verify-in-citrix-cloud)
 - [Troubleshooting for Beginners](#troubleshooting-for-beginners)
 - [Next Steps: Becoming More Advanced](#next-steps-becoming-more-advanced)
 - [FAQ for Citrix Administrators](#faq-for-citrix-administrators)
@@ -335,7 +335,7 @@ This file describes the Published Application you want to create (like filling o
 # main.tf
 module "calculator" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 0.6"
+  version = "=0.5.8"
 
   # ============================================
   # Application Identity
@@ -394,7 +394,7 @@ my-citrix-apps/
 
 **How Terraform reads credentials**:
 - Terraform automatically reads environment variables starting with `TF_VAR_`
-- You'll set these credentials in **Step 7** after deploying your first application
+- You'll set these credentials in **Step 4** before deploying your application
 - This keeps credentials secure and out of your code
 
 ---
@@ -416,11 +416,79 @@ Here's how Terraform variables map to Citrix Studio fields:
 
 ---
 
-### Step 4: Deploy Your Application
+### Step 4: Set API Credentials
+
+**⚠️ IMPORTANT: Set credentials BEFORE running Terraform commands!**
+
+After creating your API credentials in Citrix Cloud (Prerequisites Step 2), you must store them securely as **environment variables**. Terraform will automatically read these variables when you run `terraform plan` or `terraform apply`.
+
+**Why use environment variables?**
+- ✅ Credentials never appear in code or Git history
+- ✅ Easy to rotate/update without changing code
+- ✅ Different credentials per environment (Dev/Test/Prod)
+- ✅ Industry standard security practice
+
+---
+
+**For Linux/WSL Users**:
+
+Open your terminal and set the credentials as environment variables:
+
+```bash
+# Set Citrix API credentials as environment variables
+export TF_VAR_citrix_customer_id="your-customer-id-here"
+export TF_VAR_citrix_client_id="your-client-id-here"
+export TF_VAR_citrix_client_secret="your-client-secret-here"
+
+# Verify they're set (optional)
+echo $TF_VAR_citrix_customer_id
+```
+
+---
+
+**For Windows PowerShell Users**:
+
+Open PowerShell and set the credentials:
+
+```powershell
+# Set Citrix API credentials as environment variables
+$env:TF_VAR_citrix_customer_id="your-customer-id-here"
+$env:TF_VAR_citrix_client_id="your-client-id-here"
+$env:TF_VAR_citrix_client_secret="your-client-secret-here"
+
+# Verify they're set (optional)
+echo $env:TF_VAR_citrix_customer_id
+```
+
+---
+
+**For macOS Users**:
+
+```bash
+# Set Citrix API credentials as environment variables (same as Linux)
+export TF_VAR_citrix_customer_id="your-customer-id-here"
+export TF_VAR_citrix_client_id="your-client-id-here"
+export TF_VAR_citrix_client_secret="your-client-secret-here"
+
+# Verify they're set (optional)
+echo $TF_VAR_citrix_customer_id
+```
+
+---
+
+> **Note**: These environment variables are temporary and only last for the current terminal session. For permanent storage, you can add them to:
+> - **Linux/WSL/macOS**: `~/.bashrc`, `~/.zshrc`, or `~/.bash_profile`
+> - **Windows**: System Environment Variables (Start → "Environment Variables")
+
+**✅ Credentials are now set!** You can proceed to deploy your application.
+
+---
+
+### Step 5: Deploy Your Application
 
 Now let's deploy the application to Citrix Cloud using the command line.
 
-**Open your terminal/command line**:
+**Open your terminal/command line** (use the SAME terminal where you set environment variables in Step 4):
 - **Windows (WSL)**: Open "Ubuntu" from Start Menu
 - **Windows (Native)**: Open "Command Prompt" or "PowerShell"
 - **macOS**: Open "Terminal" (Applications → Utilities → Terminal)
@@ -511,7 +579,7 @@ Destroy complete! Resources: 1 destroyed.
 
 ---
 
-### Step 5: Verify in Citrix Cloud
+### Step 6: Verify in Citrix Cloud
 
 1. Log into **Citrix Cloud**: [https://citrix.cloud.com](https://citrix.cloud.com)
 2. Navigate to: **Studio → Applications → Production** (your folder)
@@ -523,66 +591,6 @@ Destroy complete! Resources: 1 destroyed.
 
 ---
 
-### Step 6: Securely Store Credentials
-
-**⚠️ IMPORTANT: Do NOT commit API credentials to Git or code files!**
-
-Now that you've deployed your first application, let's properly secure your API credentials using **environment variables**.
-
-After creating your API credentials in Citrix Cloud (Prerequisites Step 2), store them securely:
-
-**For Linux/WSL Users**:
-
-Open your terminal and set the credentials as environment variables:
-
-```bash
-# Set Citrix API credentials as environment variables
-export TF_VAR_client_id="your-client-id-here"
-export TF_VAR_client_secret="your-client-secret-here"
-export TF_VAR_customer_id="your-customer-id-here"
-
-# Verify they're set (optional)
-echo $TF_VAR_client_id
-```
-
-**For Windows PowerShell Users**:
-
-Open PowerShell and set the credentials:
-
-```powershell
-# Set Citrix API credentials as environment variables
-$env:TF_VAR_client_id="your-client-id-here"
-$env:TF_VAR_client_secret="your-client-secret-here"
-$env:TF_VAR_customer_id="your-customer-id-here"
-
-# Verify they're set (optional)
-echo $env:TF_VAR_client_id
-```
-
-**For macOS Users**:
-
-```bash
-# Set Citrix API credentials as environment variables (same as Linux)
-export TF_VAR_client_id="your-client-id-here"
-export TF_VAR_client_secret="your-client-secret-here"
-export TF_VAR_customer_id="your-customer-id-here"
-
-# Verify they're set (optional)
-echo $TF_VAR_client_id
-```
-
-> **Note**: These environment variables are temporary and only last for the current terminal session. For permanent storage, you can add them to:
-> - **Linux/WSL/macOS**: `~/.bashrc`, `~/.zshrc`, or `~/.bash_profile`
-> - **Windows**: System Environment Variables (Start → "Environment Variables")
-
-**Why use environment variables?**
-- ✅ Credentials never appear in code or Git history
-- ✅ Easy to rotate/update without changing code
-- ✅ Different credentials per environment (Dev/Test/Prod)
-- ✅ Industry standard security practice
-
----
-
 ## Troubleshooting for Beginners
 
 ### Common Errors and Solutions
@@ -590,7 +598,7 @@ echo $TF_VAR_client_id
 | Error Message | What It Means | Solution |
 |---------------|---------------|----------|
 | `Error: Delivery Group "Production-DG" not found` | The Delivery Group doesn't exist in Citrix Cloud | 1. Log into Citrix Studio<br>2. Check Delivery Groups list<br>3. Update `citrix_deliverygroup_name` with the correct name |
-| `Error: Invalid API credentials` | Customer ID, Client ID, or Secret is incorrect | 1. Go to Citrix Cloud → API Access<br>2. Create new credentials<br>3. Update environment variables (Step 7) |
+| `Error: Invalid API credentials` / `Unknown Citrix API Client Id` | Customer ID, Client ID, or Secret is incorrect or not set | 1. Verify environment variables are set (Step 4)<br>2. Check Citrix Cloud → API Access<br>3. Create new credentials if needed |
 | `Error: Application folder path "Production" not found` | The folder doesn't exist in Citrix Studio | 1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply` |
 | `Error: Failed to query provider` | Citrix provider version issue | Run `terraform init -upgrade` |
 | `Error: citrix_application_command_line_executable: invalid value` | Executable path has invalid format | Use double backslashes: `C:\\Windows\\system32\\calc.exe` |
