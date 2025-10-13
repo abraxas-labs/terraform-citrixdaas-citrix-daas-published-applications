@@ -389,7 +389,22 @@ module "calculator" {
   # ⚠️ This folder MUST exist in Citrix Cloud before running terraform apply
 
   citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"
-  # ↑ Replace with your actual Delivery Group name (e.g., "Production-DG")
+  # ↑ ⚠️⚠️⚠️ CRITICAL: You MUST change this value! ⚠️⚠️⚠️
+  #
+  # BEFORE running terraform plan/apply:
+  # 1. Open Citrix Cloud → Studio → Delivery Groups
+  # 2. Copy the EXACT name (case-sensitive!) from the list
+  # 3. Replace "YOUR-DELIVERY-GROUP-NAME" with that exact name
+  #
+  # Examples of CORRECT format:
+  #   ✅ "Production-DG"
+  #   ✅ "Test-Windows-DG"
+  #
+  # Common mistakes to AVOID:
+  #   ❌ Typos: "Production-DG" vs. "Produktion-DG"
+  #   ❌ Wrong case: "production-dg" vs. "Production-DG"
+  #   ❌ Forgetting to change: "YOUR-DELIVERY-GROUP-NAME"
+  #
   # GUI: "Delivery Group" dropdown
   # ⚠️ This Delivery Group MUST exist in Citrix Cloud
 }
@@ -550,6 +565,67 @@ echo $TF_VAR_citrix_customer_id
 
 ---
 
+### Step 4.5: Avoid the #1 Beginner Mistake!
+
+**⚠️ BEFORE running `terraform plan` - Complete this checkpoint!**
+
+The most common error for Terraform beginners is using an incorrect Delivery Group name. Let's prevent this before it happens:
+
+#### Checkpoint: Delivery Group Name Verification
+
+**Follow these steps IN ORDER:**
+
+1. **Open Citrix Cloud in your browser:**
+   - Go to [https://citrix.cloud.com](https://citrix.cloud.com)
+   - Navigate to: **Studio → Delivery Groups**
+
+<!-- SCREENSHOT PLACEHOLDER: Citrix Studio showing Delivery Groups list with names highlighted -->
+
+2. **Find your Delivery Group:**
+   - Look at the list of Delivery Groups
+   - Choose the one you want to use for this application
+   - **Copy the name EXACTLY** (right-click → Copy, or select and Ctrl+C)
+
+3. **Update your `main.tf` file:**
+   - Open `main.tf` in your text editor
+   - Find line 391: `citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"`
+   - **Paste** the exact name you just copied (replace `"YOUR-DELIVERY-GROUP-NAME"`)
+   - **Save the file** (Ctrl+S)
+
+4. **Double-check (IMPORTANT!):**
+   ```bash
+   # View the line to verify it's correct
+   grep citrix_deliverygroup_name main.tf
+
+   # Expected output example:
+   #   citrix_deliverygroup_name = "Production-Windows-DG"
+   ```
+
+#### Common Mistakes to Avoid
+
+| ❌ WRONG | ✅ CORRECT | Why It Fails |
+|---------|-----------|--------------|
+| `"production-dg"` | `"Production-DG"` | Case mismatch (lowercase vs. uppercase) |
+| `"Production-DG "` | `"Production-DG"` | Extra space at the end |
+| `"YOUR-DELIVERY-GROUP-NAME"` | `"Production-DG"` | Forgot to replace placeholder |
+| `"Prod-DG"` | `"Production-DG"` | Typo/abbreviation doesn't match |
+
+#### What Happens If You Skip This?
+
+You'll see this error when running `terraform plan`:
+
+```
+Error: Delivery Group "YOUR-DELIVERY-GROUP-NAME" not found
+
+  with data.citrix_delivery_group.this,
+  on main.tf line 17, in data "citrix_delivery_group" "this":
+  17: data "citrix_delivery_group" "this" {
+```
+
+**To fix:** Come back to this checkpoint and follow the steps above.
+
+---
+
 ### Step 5: Deploy Your Application
 
 Now let's deploy the application to Citrix Cloud using the command line.
@@ -663,7 +739,7 @@ Destroy complete! Resources: 1 destroyed.
 
 | Error Message | What It Means | Solution |
 |---------------|---------------|----------|
-| `Error: Delivery Group "Production-DG" not found` | The Delivery Group doesn't exist in Citrix Cloud | 1. Log into Citrix Studio<br>2. Check Delivery Groups list<br>3. Update `citrix_deliverygroup_name` with the correct name |
+| `Error: Delivery Group "Production-DG" not found` | **MOST COMMON ERROR:** The Delivery Group name doesn't match exactly (typo, wrong case, or doesn't exist) | **Step-by-step fix:**<br>1. Open Citrix Cloud → Studio → Delivery Groups<br>2. Find your Delivery Group in the list<br>3. Copy the name EXACTLY (case-sensitive!)<br>4. Update `citrix_deliverygroup_name` in `main.tf`<br>5. Save and re-run `terraform plan`<br><br>**Example:**<br>❌ WRONG: `"production-dg"` vs. `"Production-DG"`<br>✅ CORRECT: Exact copy from Studio |
 | `Error: Invalid API credentials` / `Unknown Citrix API Client Id` | Customer ID, Client ID, or Secret is incorrect or not set | 1. Verify environment variables are set (Step 4)<br>2. Check Citrix Cloud → API Access<br>3. Create new credentials if needed |
 | `Error: Application folder path "Production" not found` | The folder doesn't exist in Citrix Studio | 1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply` |
 | `Error: Failed to query provider` | Citrix provider version issue | Run `terraform init -upgrade` |

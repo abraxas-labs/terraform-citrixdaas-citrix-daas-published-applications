@@ -105,14 +105,22 @@ variable "citrix_application_working_directory" {
 variable "citrix_deliverygroup_name" {
   description = <<-EOT
     Name of an existing Citrix Delivery Group that will host this application.
-    The delivery group must exist before creating the application.
-    Example: "Production-Windows-DG" or "Test-Delivery-Group"
+    The delivery group MUST exist before creating the application.
+
+    IMPORTANT BEFORE DEPLOYMENT:
+    1. Open Citrix Cloud -> Studio -> Delivery Groups
+    2. Copy the EXACT name (case-sensitive!)
+    3. Paste it here
+
+    Examples: "Production-Windows-DG", "Test-Delivery-Group"
+
+    Documentation: docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md
   EOT
   type        = string
 
   validation {
     condition     = length(var.citrix_deliverygroup_name) > 0
-    error_message = "Delivery group name cannot be empty."
+    error_message = "Delivery group name cannot be empty. Please copy the exact name from Citrix Studio -> Delivery Groups."
   }
 }
 
