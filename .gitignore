@@ -13,6 +13,10 @@ archive
 .gitlab*
 *claude*
 CLAUDE.md
+# GitLab Merge Request Templates (nicht versionieren)
+.gitlab/merge_request_templates*
+# Projekt Changelog lokal behalten / nicht mehr tracken
+CHANGELOG.md
 # Crash log files
 crash.log
 
