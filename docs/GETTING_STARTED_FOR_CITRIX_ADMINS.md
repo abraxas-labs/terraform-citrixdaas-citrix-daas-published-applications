@@ -107,11 +107,12 @@ You must already have the following in Citrix Cloud:
   <!-- SCREENSHOT PLACEHOLDER: Citrix Studio Delivery Groups list -->
 - ✓ **Machine Catalog with VDAs** (Virtual Delivery Agents) assigned to the Delivery Group
   - How to check: Citrix Cloud → Studio → Machine Catalogs
-- ✓ **Application Folder** created (e.g., "Production", "Applications")
+- **Application Folder** (optional) - If you want to organize apps into folders
   - How to check: Citrix Cloud → Studio → Applications → Folders
+  - **Note**: Folders are optional! Apps can be created in the root folder without any folder structure
   <!-- SCREENSHOT PLACEHOLDER: Citrix Studio Application Folders -->
 
-> **Note**: This module creates **Published Applications** only. It does NOT create Delivery Groups, Machine Catalogs, or VDAs—those must exist beforehand.
+> **Note**: This module creates **Published Applications** only. It does NOT create Delivery Groups, Machine Catalogs, or VDAs—those must exist beforehand. Application folders are optional.
 
 ---
 
