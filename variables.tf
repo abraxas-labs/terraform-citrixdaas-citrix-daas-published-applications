@@ -122,6 +122,33 @@ variable "citrix_deliverygroup_name" {
     condition     = length(var.citrix_deliverygroup_name) > 0
     error_message = "Delivery group name cannot be empty. Please copy the exact name from Citrix Studio -> Delivery Groups."
   }
+
+  validation {
+    condition     = !can(regex("(?i)^YOUR-", var.citrix_deliverygroup_name))
+    error_message = <<-EOT
+
+      ❌ ERROR: You forgot to replace the placeholder "YOUR-DELIVERY-GROUP-NAME"!
+
+      BEFORE running terraform plan/apply, you MUST:
+
+      1. Open Citrix Cloud in your browser:
+         → https://citrix.cloud.com
+         → Navigate to: Studio → Delivery Groups
+
+      2. Copy the EXACT name of your Delivery Group
+         (Right-click on the name and select "Copy", or select and press Ctrl+C)
+
+      3. Update citrix_deliverygroup_name with the copied value
+         Example: citrix_deliverygroup_name = "Production-Windows-DG"
+
+      Common mistakes:
+        ❌ "production-dg" vs "Production-DG" (wrong case)
+        ❌ "Prod-DG" vs "Production-DG" (typo)
+        ❌ "YOUR-DELIVERY-GROUP-NAME" (forgot to change)
+
+      📖 Full instructions: docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md (Step 4.5)
+    EOT
+  }
 }
 
 variable "citrix_application_folder_path" {
