@@ -1,0 +1,778 @@
+# Getting Started: Citrix Published Applications with Terraform
+
+> **Complete Guide for Citrix Administrators New to Terraform**
+>
+> This tutorial is designed for Citrix Administrators who are familiar with Citrix Studio (GUI) but have no prior experience with Terraform or Infrastructure as Code. You'll learn how to automate Citrix Published Application creation using code instead of clicks.
+>
+> **Already know Terraform?** Skip to the [Quick Start Guide](../README.md#usage) in the main README.
+
+---
+
+## Table of Contents
+
+- [What Is This? (GUI vs. Code Comparison)](#what-is-this-gui-vs-code-comparison)
+- [Why Should You Use This?](#why-should-you-use-this)
+- [Prerequisites: What You Need Before Starting](#prerequisites-what-you-need-before-starting)
+  - [1. Existing Citrix Infrastructure](#1-existing-citrix-infrastructure)
+  - [2. Citrix Cloud API Credentials](#2-citrix-cloud-api-credentials)
+  - [3. Install Terraform](#3-install-terraform)
+- [Getting Started: Your First Published Application](#getting-started-your-first-published-application)
+  - [Step 1: Create Your Project Folder](#step-1-create-your-project-folder)
+  - [Step 2: Configure Citrix Connection](#step-2-configure-citrix-connection)
+  - [Step 3: Field Mapping Reference](#step-3-field-mapping-reference)
+  - [Step 4: Deploy Your Application](#step-4-deploy-your-application)
+  - [Step 5: Verify in Citrix Cloud](#step-5-verify-in-citrix-cloud)
+  - [Step 6: Securely Store Credentials](#step-6-securely-store-credentials)
+- [Troubleshooting for Beginners](#troubleshooting-for-beginners)
+- [Next Steps: Becoming More Advanced](#next-steps-becoming-more-advanced)
+- [FAQ for Citrix Administrators](#faq-for-citrix-administrators)
+- [Additional Resources](#additional-resources)
+
+---
+
+## What Is This? (GUI vs. Code Comparison)
+
+If you're a Citrix Administrator used to clicking through Citrix Studio, this module does the same thing—but with code.
+
+### The Traditional Way (Citrix Studio):
+1. Log into Citrix Cloud
+2. Open Citrix Studio
+3. Navigate to Applications → Create Application
+4. Fill out the form (15-20 clicks):
+   - Application Name
+   - Published Name
+   - Executable Path
+   - Working Directory
+   - Select Delivery Group
+   - Set Folder
+   - Configure Visibility (optional)
+   - Add Icon (optional)
+5. Click "Finish"
+6. **Time**: ~5 minutes per application
+
+<!-- SCREENSHOT PLACEHOLDER: Citrix Studio "Create Application" wizard -->
+
+### The Automated Way (This Module):
+1. Write a configuration file describing your application (see example below)
+2. Run `terraform apply`
+3. **Time**: ~30 seconds per application (plus, you can deploy 100 apps as easily as 1)
+
+```hcl
+module "calculator" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "~> 0.6"
+
+  citrix_application_name                    = "calculator-app"
+  citrix_application_published_name          = "Calculator"
+  citrix_application_command_line_executable = "C:\\Windows\\system32\\calc.exe"
+  citrix_deliverygroup_name                  = "Production-DG"
+  citrix_application_folder_path             = "Production"
+}
+```
+
+**Result**: Same published application, same user experience—just created with code.
+
+---
+
+## Why Should You Use This?
+
+### Time Savings
+| Task | Citrix Studio (Manual) | This Module (Automated) |
+|------|------------------------|-------------------------|
+| 1 Published App | 5 minutes (15-20 clicks) | 30 seconds |
+| 10 Published Apps | 50 minutes | 5 minutes |
+| 100 Published Apps | 8+ hours | 15 minutes |
+
+### Additional Benefits
+- ✅ **No Click Errors**: Configuration is validated before deployment
+- ✅ **Repeatable**: Deploy the same app to Dev/Test/Prod environments
+- ✅ **Version Control**: Track changes over time (who changed what, when)
+- ✅ **Documentation**: Your code IS your documentation
+- ✅ **Team Collaboration**: Share configurations, peer review changes
+- ✅ **Rollback**: Easily revert to previous configurations
+
+---
+
+## Prerequisites: What You Need Before Starting
+
+### 1. Existing Citrix Infrastructure
+
+You must already have the following in Citrix Cloud:
+
+- ✓ **Citrix Cloud Account** ([Sign up here](https://citrix.cloud.com))
+- ✓ **Citrix DaaS Service** enabled
+  <!-- SCREENSHOT PLACEHOLDER: Citrix Cloud dashboard showing DaaS enabled -->
+- ✓ **At least one Delivery Group** (e.g., "Production-DG")
+  - How to check: Citrix Cloud → Studio → Delivery Groups
+  <!-- SCREENSHOT PLACEHOLDER: Citrix Studio Delivery Groups list -->
+- ✓ **Machine Catalog with VDAs** (Virtual Delivery Agents) assigned to the Delivery Group
+  - How to check: Citrix Cloud → Studio → Machine Catalogs
+- ✓ **Application Folder** created (e.g., "Production", "Applications")
+  - How to check: Citrix Cloud → Studio → Applications → Folders
+  <!-- SCREENSHOT PLACEHOLDER: Citrix Studio Application Folders -->
+
+> **Note**: This module creates **Published Applications** only. It does NOT create Delivery Groups, Machine Catalogs, or VDAs—those must exist beforehand.
+
+---
+
+### 2. Citrix Cloud API Credentials
+
+You need API credentials to allow Terraform to connect to Citrix Cloud.
+
+**Step-by-Step: Creating API Credentials**
+
+1. **Log into Citrix Cloud**: [https://citrix.cloud.com](https://citrix.cloud.com)
+2. **Navigate to API Access**:
+   - Click "Identity and Access Management" (hamburger menu, top-left)
+   - Select "API Access"
+   <!-- SCREENSHOT PLACEHOLDER: Citrix Cloud → Identity and Access Management → API Access -->
+3. **Create Secure Client**:
+   - Click "Create Client"
+   - Give it a name (e.g., "Terraform Automation")
+   - Click "Create"
+4. **Save Your Credentials** (⚠️ Important!):
+   - **Customer ID**: Copy this (example: `abc123xyz`)
+   - **Client ID**: Copy this (example: `12345678-1234-1234-1234-123456789012`)
+   - **Client Secret**: Copy this immediately—it's only shown once! (example: `xxxxxxx-xxxxxxx==`)
+   <!-- SCREENSHOT PLACEHOLDER: API credentials screen with redacted values highlighted -->
+
+> **⚠️ Security Warning**: The Client Secret is only displayed once. If you lose it, you'll need to create new credentials.
+
+**Detailed Documentation**: [Citrix Cloud API - Getting Started](https://developer-docs.citrix.com/en-us/citrix-cloud/citrix-cloud-api-overview/get-started-with-citrix-cloud-apis.html)
+
+---
+
+### 3. Install Terraform
+
+Terraform is the tool that reads your configuration files and creates resources in Citrix Cloud.
+
+#### **For Windows Users** (Most Citrix Admins):
+
+We **strongly recommend** using **WSL2** (Windows Subsystem for Linux) instead of Windows-native Terraform:
+- ✅ Better compatibility with Terraform tools
+- ✅ Easier to follow documentation/examples
+- ✅ Works seamlessly with Git and other DevOps tools
+
+**Option A: Install WSL2 + Terraform (Recommended)**
+
+1. **Install WSL2**:
+   ```powershell
+   # Run in PowerShell (as Administrator)
+   wsl --install
+   # Restart your computer when prompted
+   ```
+   [Official Microsoft WSL2 Installation Guide](https://docs.microsoft.com/en-us/windows/wsl/install)
+
+2. **Install Terraform in WSL2** (Latest Version: 1.13.3):
+   ```bash
+   # Open Ubuntu terminal (search "Ubuntu" in Start Menu)
+
+   # Download Terraform 1.13.3
+   wget https://releases.hashicorp.com/terraform/1.13.3/terraform_1.13.3_linux_amd64.zip
+
+   # Unzip and install
+   unzip terraform_1.13.3_linux_amd64.zip
+   sudo mv terraform /usr/local/bin/
+
+   # Verify installation
+   terraform --version
+   # Should output: Terraform v1.13.3
+   ```
+
+**Option B: Windows Native (Alternative)**
+
+Using [Chocolatey](https://chocolatey.org/):
+```powershell
+# Run in PowerShell (as Administrator)
+choco install terraform
+```
+
+Or download manually from the official HashiCorp website:
+- [Terraform Installation Guide](https://developer.hashicorp.com/terraform/install)
+- [Direct Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
+
+---
+
+#### **For macOS Users**:
+
+**Option A: Install with Homebrew (Recommended)**
+
+```bash
+# Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install Terraform
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+
+# Verify installation
+terraform --version
+# Should output: Terraform v1.13.3
+```
+
+**Option B: Manual Installation**
+
+1. Download Terraform for macOS from [HashiCorp Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
+2. Unzip and move to `/usr/local/bin/`:
+   ```bash
+   unzip terraform_1.13.3_darwin_amd64.zip
+   sudo mv terraform /usr/local/bin/
+   terraform --version
+   ```
+
+**Detailed Installation Guide**: [HashiCorp Terraform CLI Installation](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+
+---
+
+#### **For Linux Users**:
+
+```bash
+# Download Terraform 1.13.3
+wget https://releases.hashicorp.com/terraform/1.13.3/terraform_1.13.3_linux_amd64.zip
+
+# Unzip and install
+unzip terraform_1.13.3_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+
+# Verify installation
+terraform --version
+# Should output: Terraform v1.13.3
+```
+
+---
+
+## Getting Started: Your First Published Application
+
+Let's create your first Citrix Published Application using Terraform. We'll publish the **Windows Calculator** as an example (just like you would in Citrix Studio).
+
+### Step 1: Create Your Project Folder
+
+```bash
+# Create a directory for your Citrix automation project
+mkdir my-citrix-apps
+cd my-citrix-apps
+```
+
+---
+
+### Step 2: Configure Citrix Connection
+
+In this step, you'll create 3 files: `terraform.tf`, `variables.tf`, and `main.tf`.
+
+**How to create files**:
+- Open your favorite editor: **Notepad** (Windows), **nano** (Linux/WSL), **vi/vim**, or **VS Code**
+- Copy the code blocks below and paste them into the corresponding files
+- Save each file in your `my-citrix-apps` directory
+
+---
+
+#### File 1: `terraform.tf`
+
+**What does this file do?**
+This file establishes the connection to Citrix Cloud (like logging into Citrix Studio).
+
+**GUI Equivalent**: Logging into Citrix Cloud with your credentials.
+
+```hcl
+# terraform.tf
+terraform {
+  required_version = ">= 1.2"
+  required_providers {
+    citrix = {
+      source  = "citrix/citrix"
+      version = "~> 1.0.7"
+    }
+  }
+}
+
+provider "citrix" {
+  cvad_config = {
+    customer_id   = var.citrix_customer_id      # ← Uses environment variable TF_VAR_customer_id
+    client_id     = var.citrix_client_id        # ← Uses environment variable TF_VAR_client_id
+    client_secret = var.citrix_client_secret    # ← Uses environment variable TF_VAR_client_secret
+  }
+}
+```
+
+---
+
+#### File 2: `variables.tf`
+
+**What does this file do?**
+Defines the input variables for API credentials (without storing the actual values).
+
+```hcl
+# variables.tf
+variable "citrix_customer_id" {
+  description = "Citrix Cloud Customer ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "citrix_client_id" {
+  description = "Citrix Cloud Client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "citrix_client_secret" {
+  description = "Citrix Cloud Client Secret"
+  type        = string
+  sensitive   = true
+}
+```
+
+---
+
+#### File 3: `main.tf`
+
+**What does this file do?**
+This file describes the Published Application you want to create (like filling out the "Create Application" form in Citrix Studio).
+
+**GUI Equivalent**: The "Create Application" wizard in Citrix Studio.
+
+```hcl
+# main.tf
+module "calculator" {
+  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
+  version = "~> 0.6"
+
+  # ============================================
+  # Application Identity
+  # ============================================
+  citrix_application_name           = "calculator-app"
+  # ↑ Internal name (not visible to users)
+  # GUI: "Application Name" field
+
+  citrix_application_published_name = "Calculator"
+  # ↑ Display name users see in Citrix Workspace
+  # GUI: "Published Name" field
+
+  citrix_application_description = "Windows Calculator Application"
+  # ↑ Description shown to users
+  # GUI: "Description" field
+
+  # ============================================
+  # Executable Configuration
+  # ============================================
+  citrix_application_command_line_executable = "C:\\Windows\\system32\\calc.exe"
+  # ↑ Path to the .exe file on the VDA (Virtual Delivery Agent)
+  # GUI: "Application Path" field
+
+  citrix_application_command_line_arguments = ""
+  # ↑ Command line arguments (empty for Calculator)
+  # GUI: "Command Line Arguments" field
+
+  citrix_application_working_directory = "%HOMEDRIVE%%HOMEPATH%"
+  # ↑ Starting directory (user's home directory)
+  # GUI: "Working Directory" field
+
+  # ============================================
+  # Citrix Organization
+  # ============================================
+  citrix_application_folder_path = "Production"
+  # ↑ Folder in Citrix Studio where app appears
+  # GUI: "Folder" dropdown
+  # ⚠️ This folder MUST exist in Citrix Cloud before running terraform apply
+
+  citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"
+  # ↑ Replace with your actual Delivery Group name (e.g., "Production-DG")
+  # GUI: "Delivery Group" dropdown
+  # ⚠️ This Delivery Group MUST exist in Citrix Cloud
+}
+```
+
+**✅ File Creation Summary**:
+
+You should now have 3 files in your `my-citrix-apps` directory:
+```
+my-citrix-apps/
+├── terraform.tf     (Citrix provider configuration)
+├── variables.tf     (Variable definitions)
+└── main.tf          (Application definition)
+```
+
+**How Terraform reads credentials**:
+- Terraform automatically reads environment variables starting with `TF_VAR_`
+- You'll set these credentials in **Step 7** after deploying your first application
+- This keeps credentials secure and out of your code
+
+---
+
+### Step 3: Field Mapping Reference
+
+Here's how Terraform variables map to Citrix Studio fields:
+
+| Citrix Studio Field | Terraform Variable | Example Value |
+|---------------------|-------------------|---------------|
+| Application Name | `citrix_application_name` | `"calculator-app"` |
+| Published Name | `citrix_application_published_name` | `"Calculator"` |
+| Description | `citrix_application_description` | `"Windows Calculator"` |
+| Application Path | `citrix_application_command_line_executable` | `"C:\\Windows\\system32\\calc.exe"` |
+| Command Line Arguments | `citrix_application_command_line_arguments` | `""` |
+| Working Directory | `citrix_application_working_directory` | `"%HOMEDRIVE%%HOMEPATH%"` |
+| Folder | `citrix_application_folder_path` | `"Production"` |
+| Delivery Group | `citrix_deliverygroup_name` | `"Production-DG"` |
+
+---
+
+### Step 4: Deploy Your Application
+
+Now let's deploy the application to Citrix Cloud using the command line.
+
+**Open your terminal/command line**:
+- **Windows (WSL)**: Open "Ubuntu" from Start Menu
+- **Windows (Native)**: Open "Command Prompt" or "PowerShell"
+- **macOS**: Open "Terminal" (Applications → Utilities → Terminal)
+- **Linux**: Open your terminal application
+
+**Navigate to your project folder**:
+```bash
+cd my-citrix-apps
+```
+
+**Run the following Terraform commands**:
+
+#### Command 1: Initialize Terraform
+```bash
+terraform init
+```
+**What happens?** Terraform downloads the Citrix provider and this module from the Terraform Registry.
+
+**Expected Output**:
+```
+Initializing modules...
+Downloading abraxas-labs/citrix-daas-published-applications/citrixdaas...
+
+Terraform has been successfully initialized!
+```
+
+<!-- SCREENSHOT PLACEHOLDER: terraform init output -->
+
+---
+
+#### Command 2: Preview Changes (Dry Run)
+```bash
+terraform plan
+```
+**What happens?** Terraform shows you exactly what will be created—like a "preview" or "dry run". **NOTHING is created yet!**
+
+**Expected Output**:
+```
+Plan: 1 to add, 0 to change, 0 to destroy.
+```
+
+**⚠️ Read this output carefully!** It shows you what Terraform will create.
+
+<!-- SCREENSHOT PLACEHOLDER: terraform plan output showing the application to be created -->
+
+---
+
+#### Command 3: Apply Changes (Deploy to Citrix Cloud)
+```bash
+terraform apply
+```
+**What happens?** Terraform creates the Published Application in Citrix Cloud.
+
+**Confirmation Required**: Terraform asks: `Do you want to perform these actions?`
+- Type **`yes`** and press **Enter**
+
+**⚠️ Important**: Only after you type `yes` will Terraform make changes to Citrix Cloud.
+
+<!-- SCREENSHOT PLACEHOLDER: terraform apply confirmation prompt -->
+
+---
+
+#### Command 4: Destroy Application (Optional)
+
+**⚠️ Use this only if you want to delete the application from Citrix Cloud**
+
+```bash
+terraform destroy
+```
+
+**What happens?** Terraform deletes the Published Application from Citrix Cloud.
+
+**Confirmation Required**: Terraform asks: `Do you really want to destroy all resources?`
+- Type **`yes`** and press **Enter** to confirm deletion
+- Type **`no`** or press **Ctrl+C** to cancel
+
+**Expected Output**:
+```
+Destroy complete! Resources: 1 destroyed.
+```
+
+**When to use this**:
+- Testing: Clean up test applications after learning
+- Mistakes: Remove incorrectly configured applications
+- Cleanup: Delete applications you no longer need
+
+**⚠️ Warning**: This permanently deletes the application. Make sure you selected the correct application before confirming!
+
+---
+
+### Step 5: Verify in Citrix Cloud
+
+1. Log into **Citrix Cloud**: [https://citrix.cloud.com](https://citrix.cloud.com)
+2. Navigate to: **Studio → Applications → Production** (your folder)
+3. ✅ You should see **"Calculator"** in the list
+
+<!-- SCREENSHOT PLACEHOLDER: Citrix Studio showing the newly created Calculator application -->
+
+**Congratulations!** 🎉 You've just created your first Published Application using Terraform.
+
+---
+
+### Step 6: Securely Store Credentials
+
+**⚠️ IMPORTANT: Do NOT commit API credentials to Git or code files!**
+
+Now that you've deployed your first application, let's properly secure your API credentials using **environment variables**.
+
+After creating your API credentials in Citrix Cloud (Prerequisites Step 2), store them securely:
+
+**For Linux/WSL Users**:
+
+Open your terminal and set the credentials as environment variables:
+
+```bash
+# Set Citrix API credentials as environment variables
+export TF_VAR_client_id="your-client-id-here"
+export TF_VAR_client_secret="your-client-secret-here"
+export TF_VAR_customer_id="your-customer-id-here"
+
+# Verify they're set (optional)
+echo $TF_VAR_client_id
+```
+
+**For Windows PowerShell Users**:
+
+Open PowerShell and set the credentials:
+
+```powershell
+# Set Citrix API credentials as environment variables
+$env:TF_VAR_client_id="your-client-id-here"
+$env:TF_VAR_client_secret="your-client-secret-here"
+$env:TF_VAR_customer_id="your-customer-id-here"
+
+# Verify they're set (optional)
+echo $env:TF_VAR_client_id
+```
+
+**For macOS Users**:
+
+```bash
+# Set Citrix API credentials as environment variables (same as Linux)
+export TF_VAR_client_id="your-client-id-here"
+export TF_VAR_client_secret="your-client-secret-here"
+export TF_VAR_customer_id="your-customer-id-here"
+
+# Verify they're set (optional)
+echo $TF_VAR_client_id
+```
+
+> **Note**: These environment variables are temporary and only last for the current terminal session. For permanent storage, you can add them to:
+> - **Linux/WSL/macOS**: `~/.bashrc`, `~/.zshrc`, or `~/.bash_profile`
+> - **Windows**: System Environment Variables (Start → "Environment Variables")
+
+**Why use environment variables?**
+- ✅ Credentials never appear in code or Git history
+- ✅ Easy to rotate/update without changing code
+- ✅ Different credentials per environment (Dev/Test/Prod)
+- ✅ Industry standard security practice
+
+---
+
+## Troubleshooting for Beginners
+
+### Common Errors and Solutions
+
+| Error Message | What It Means | Solution |
+|---------------|---------------|----------|
+| `Error: Delivery Group "Production-DG" not found` | The Delivery Group doesn't exist in Citrix Cloud | 1. Log into Citrix Studio<br>2. Check Delivery Groups list<br>3. Update `citrix_deliverygroup_name` with the correct name |
+| `Error: Invalid API credentials` | Customer ID, Client ID, or Secret is incorrect | 1. Go to Citrix Cloud → API Access<br>2. Create new credentials<br>3. Update environment variables (Step 7) |
+| `Error: Application folder path "Production" not found` | The folder doesn't exist in Citrix Studio | 1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply` |
+| `Error: Failed to query provider` | Citrix provider version issue | Run `terraform init -upgrade` |
+| `Error: citrix_application_command_line_executable: invalid value` | Executable path has invalid format | Use double backslashes: `C:\\Windows\\system32\\calc.exe` |
+
+<!-- SCREENSHOT PLACEHOLDER: Example error output in terminal with solution highlighted -->
+
+**For detailed troubleshooting**, see [Troubleshooting Guide](TROUBLESHOOTING.md).
+
+---
+
+### Validation Workflow (Before Deploying)
+
+Always run these commands in order:
+
+```bash
+# 1. Format your code (fixes indentation/spacing)
+terraform fmt
+
+# 2. Validate syntax (checks for errors)
+terraform validate
+
+# 3. Preview changes (see what will be created)
+terraform plan
+
+# 4. Only then: Apply changes
+terraform apply
+```
+
+---
+
+## Next Steps: Becoming More Advanced
+
+### 1. Explore Advanced Examples
+
+See real-world scenarios including:
+- **Visibility Restrictions**: Limit apps to specific AD groups/users
+- **Custom Icons**: Brand applications with company logos
+- **Bulk Deployment**: Deploy 10+ applications simultaneously
+- **Multi-Environment**: Manage Dev/Test/Prod with workspaces
+
+**👉 [View Advanced Examples](EXAMPLES.md)**
+
+---
+
+### 2. Learn Git Basics (Version Control)
+Track your Terraform configurations over time:
+- [Git for Beginners](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control)
+- Why? Rollback changes, collaborate with team, audit trail
+
+---
+
+### 3. Best Practices for Citrix Admins
+- **Naming Conventions**: Use consistent naming (e.g., `app-name-environment`)
+- **Folder Structure**: Organize by environment (Dev/Test/Prod) or department
+- **Testing**: Always test in a non-production Delivery Group first
+- **Documentation**: Comment your code (future you will thank you!)
+
+---
+
+### 4. Advanced Terraform Concepts (Optional)
+- **Workspaces**: Manage multiple environments (Dev/Test/Prod)
+- **Modules**: Create reusable configurations for your organization
+- **Remote State**: Store Terraform state in Azure Storage or AWS S3
+
+---
+
+## FAQ for Citrix Administrators
+
+### Q: Does this replace Citrix Studio?
+**A**: No. Citrix Studio is still essential for:
+- Monitoring sessions
+- Troubleshooting user issues
+- Viewing real-time performance
+- Managing VDAs and Machine Catalogs
+
+This module automates **application creation/management only**—it doesn't replace Studio.
+
+---
+
+### Q: Can I manage existing applications created in Studio?
+**A**: Yes, but you need to **import** them into Terraform first:
+```bash
+terraform import module.calculator.citrix_application.published_application <application-id>
+```
+[Terraform Import Documentation](https://www.terraform.io/docs/cli/import/index.html)
+
+---
+
+### Q: What happens if I change an app in Studio after creating it with Terraform?
+**A**: Terraform detects "drift" (differences between your code and reality).
+When you run `terraform plan`, it shows:
+- What you have in Studio (actual state)
+- What your code defines (desired state)
+- What changes Terraform will make to reconcile them
+
+**Best Practice**: Make all changes in Terraform code, not in Studio (to avoid drift).
+
+---
+
+### Q: Can I delete applications with Terraform?
+**A**: Yes. Remove the `module` block from `main.tf`, then run:
+```bash
+terraform apply
+```
+Terraform will ask: `Do you want to destroy these resources?`
+
+---
+
+### Q: What if I make a mistake in my code?
+**A**:
+1. **Before `terraform apply`**: Just fix the code and re-run `terraform plan`
+2. **After `terraform apply`**: Fix the code and run `terraform apply` again (Terraform updates the resource)
+3. **Worst case**: Delete the application in Studio, fix the code, re-apply
+
+---
+
+### Q: Is this safe to use in production?
+**A**: Yes, if you follow the validation workflow:
+1. Always run `terraform plan` first
+2. Review the output carefully
+3. Test in a non-production environment first
+4. Use version control (Git) to track changes
+
+---
+
+### Q: Do I need to be a developer to use this?
+**A**: No! If you can:
+- Fill out forms in Citrix Studio
+- Copy/paste text
+- Follow step-by-step instructions
+
+...you can use this module. The examples are designed for Citrix Admins, not developers.
+
+---
+
+### Q: Where can I get help?
+**A**:
+- **Issues/Bugs**: [GitHub Issues](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues)
+- **Questions**: Open a [GitHub Discussion](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/discussions)
+- **Citrix Provider Docs**: [Terraform Citrix Provider](https://registry.terraform.io/providers/citrix/citrix/latest/docs)
+
+---
+
+## Additional Resources
+
+### For Citrix Administrators New to Terraform
+- [Terraform Tutorial for Beginners](https://learn.hashicorp.com/collections/terraform/aws-get-started)
+- [Infrastructure as Code Explained](https://www.redhat.com/en/topics/automation/what-is-infrastructure-as-code-iac)
+
+### Citrix-Specific Documentation
+- [Citrix Cloud API Documentation](https://developer-docs.citrix.com/)
+- [Citrix Terraform Provider](https://registry.terraform.io/providers/citrix/citrix/latest/docs)
+
+### Related Documentation
+- **[Main README](../README.md)** — Quick start and module reference
+- **[Advanced Examples](EXAMPLES.md)** — Real-world scenarios (visibility, icons, bulk deployment)
+- **[Troubleshooting Guide](TROUBLESHOOTING.md)** — Detailed error solutions and debugging
+
+---
+
+## Contributing
+
+Contributions are welcome! If you're a Citrix Admin who found this module useful (or confusing), please:
+- Open an issue with feedback
+- Suggest improvements to documentation
+- Share your use cases/examples
+
+**Contributors**:
+- @cedfont
+- @abraxas-citrix-bot
+
+---
+
+## License
+
+This module is licensed under the MIT License. See [LICENSE](../LICENSE) for details.
+
+---
+
+## Feedback
+
+**If this module helped you**, please:
+- ⭐ Star this repository (click the star button at the top-right)
+- Share with other Citrix Administrators
+- Open an issue if you have questions or suggestions

@@ -1,9 +1,9 @@
 terraform {
-  required_version = ">=1.2"
+  required_version = ">= 1.2"
   required_providers {
     citrix = {
       source  = "citrix/citrix"
-      version = "=1.0.7"
+      version = ">= 1.0"
     }
   }
 }
@@ -22,7 +22,7 @@ provider "citrix" {
 ###############################################################################
 
 data "citrix_delivery_group" "example_delivery_group" {
-  name = var.citrix_deliverygroup_name[0]
+  name = var.citrix_deliverygroup_name
 }
 
 resource "citrix_admin_folder" "example_admin_folder_1" {
@@ -40,7 +40,7 @@ module "citrix-daas-published-applications" {
   citrix_application_name                    = var.citrix_application_name
   citrix_application_description             = var.citrix_application_description
   citrix_application_published_name          = var.citrix_application_published_name
-  citrix_application_command_line_arguments  = "“%**”"
+  citrix_application_command_line_arguments  = ""
   citrix_application_command_line_executable = var.citrix_application_command_line_executable
   citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
   citrix_application_folder_path             = citrix_admin_folder.example_admin_folder_1.path
@@ -96,9 +96,9 @@ variable "citrix_application_visibility" {
 
 variable "citrix_deliverygroup_name" {
   description = <<-EOF
-  Please enter the Name of the delivery group. Example: ["DG-A-Test"]
+  Please enter the Name of the delivery group. Example: "DG-A-Test"
   EOF
-  type        = list(string)
+  type        = string
 }
 
 variable "citrix_application_name" {
