@@ -162,7 +162,7 @@ variable "citrix_application_folder_path" {
   nullable    = true
 
   validation {
-    condition     = var.citrix_application_folder_path == null || (length(var.citrix_application_folder_path) > 0 && !can(regex("^/|/$", var.citrix_application_folder_path)))
+    condition     = var.citrix_application_folder_path == null || (var.citrix_application_folder_path != "" && !can(regex("^/|/$", var.citrix_application_folder_path)))
     error_message = "Application folder path must not be empty and should not start or end with a slash. Use null to place the application in the root folder."
   }
 }
