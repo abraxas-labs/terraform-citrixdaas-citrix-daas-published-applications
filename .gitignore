@@ -1,24 +1,44 @@
-# Local .terraform directories
+###############################
+# Terraform / Infrastruktur   #
+###############################
+# Lokale Terraform Arbeitsverzeichnisse & Lockfile
 **/.terraform/*
 .terraform.lock.hcl
-.DS_Store
-# .tfstate files
+# States (werden nicht versioniert)
 *.tfstate
 *.tfstate.*
+
+###############################
+# System / Plattform Artefakte
+###############################
+.DS_Store
 *.exe
-.gitlab-ci copy.yml
-CHANGELOG*
-.pre-commit-config.yaml
-archive
-.gitlab*
-*claude*
-CLAUDE.md
-# GitLab Merge Request Templates (nicht versionieren)
-.gitlab/merge_request_templates*
-# Projekt Changelog lokal behalten / nicht mehr tracken
-CHANGELOG.md
-# Crash log files
 crash.log
+
+###############################
+# Projekt-spezifische Ausschlüsse
+###############################
+# Archivierte / alte Dokumente
+archive/
+
+# KI / Assistenten Dateien (Groß- & Kleinschreibung abgedeckt)
+*[cC][lL][aA][uU][dD][eE]*
+
+# Pre-Commit Konfiguration lokal (nicht teilen)
+.pre-commit-config.yaml
+
+# CHANGELOG lokal führen (oder Release Notes generieren)
+CHANGELOG*
+
+###############################
+# GitLab Artefakte
+###############################
+# Kopie / Hilfsdatei einer CI Konfiguration
+.gitlab-ci copy.yml
+# Nur Merge Request Templates ignorieren, andere .gitlab Inhalte erlauben
+.gitlab/merge_request_templates/
+
+# (Falls zukünftig komplettes .gitlab Verzeichnis ignoriert werden soll: .gitlab/ eintragen)
 
 # Ignore any .tfvars files that are generated automatically for each Terraform run. Most
 # .tfvars files are managed as part of configuration and so should be included in
