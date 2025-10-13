@@ -187,9 +187,22 @@ Using [Chocolatey](https://chocolatey.org/):
 choco install terraform
 ```
 
-Or download manually from the official HashiCorp website:
+**Option C: Manual Download (If Chocolatey is not installed)**
+
+If you don't have Chocolatey installed, download Terraform manually from the official HashiCorp website:
+
+1. Download the latest version from: [Direct Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
+2. Extract the ZIP file to a folder (e.g., `C:\terraform\`)
+3. Add the folder to your system PATH:
+   - Right-click "This PC" → Properties → Advanced System Settings
+   - Click "Environment Variables"
+   - Under "System Variables", find "Path" and click "Edit"
+   - Click "New" and add the path (e.g., `C:\terraform\`)
+   - Click "OK" to save
+4. Open a new PowerShell window and verify: `terraform --version`
+
+**Additional Resources**:
 - [Terraform Installation Guide](https://developer.hashicorp.com/terraform/install)
-- [Direct Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
 
 ---
 
@@ -359,7 +372,7 @@ module "calculator" {
   # ↑ Path to the .exe file on the VDA (Virtual Delivery Agent)
   # GUI: "Application Path" field
 
-  citrix_application_command_line_arguments = ""
+  citrix_application_command_line_arguments = "C:\\Windows\\system32\\"
   # ↑ Command line arguments (empty for Calculator)
   # GUI: "Command Line Arguments" field
 
@@ -427,6 +440,59 @@ After creating your API credentials in Citrix Cloud (Prerequisites Step 2), you 
 - ✅ Easy to rotate/update without changing code
 - ✅ Different credentials per environment (Dev/Test/Prod)
 - ✅ Industry standard security practice
+
+---
+
+#### **Proxy Configuration (Optional)**
+
+**⚠️ If you are behind a corporate proxy, you MUST configure proxy settings BEFORE running `terraform init`!**
+
+If your network requires a proxy server to access the internet, Terraform needs to know about it. Set these environment variables **in addition to** your Citrix API credentials:
+
+**For Windows PowerShell**:
+```powershell
+# Set proxy configuration (replace x.x.x.x:8080 with your actual proxy address)
+$env:HTTP_PROXY="http://x.x.x.x:8080"
+$env:HTTPS_PROXY="http://x.x.x.x:8080"
+
+# If proxy requires authentication (optional)
+$env:HTTP_PROXY="http://username:password@x.x.x.x:8080"
+$env:HTTPS_PROXY="http://username:password@x.x.x.x:8080"
+
+# Verify proxy is set (optional)
+echo $env:HTTPS_PROXY
+```
+
+**For Linux/WSL**:
+```bash
+# Set proxy configuration (replace x.x.x.x:8080 with your actual proxy address)
+export HTTP_PROXY="http://x.x.x.x:8080"
+export HTTPS_PROXY="http://x.x.x.x:8080"
+
+# If proxy requires authentication (optional)
+export HTTP_PROXY="http://username:password@x.x.x.x:8080"
+export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
+
+# Verify proxy is set (optional)
+echo $HTTPS_PROXY
+```
+
+**For macOS**:
+```bash
+# Set proxy configuration (same as Linux)
+export HTTP_PROXY="http://x.x.x.x:8080"
+export HTTPS_PROXY="http://x.x.x.x:8080"
+
+# If proxy requires authentication (optional)
+export HTTP_PROXY="http://username:password@x.x.x.x:8080"
+export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
+
+# Verify proxy is set (optional)
+echo $HTTPS_PROXY
+```
+
+**Common Proxy Error**:
+If you see errors like `connection timeout` or `unable to download provider` during `terraform init`, it's likely a proxy configuration issue.
 
 ---
 
