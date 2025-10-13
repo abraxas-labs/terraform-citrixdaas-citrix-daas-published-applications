@@ -145,24 +145,25 @@ EXAMPLE:
 
 variable "citrix_application_folder_path" {
   description = <<-EOT
-    Citrix admin folder path where the application will be organized.
-    The folder must exist in Citrix Cloud before creating the application.
-    Use folder name without leading/trailing slashes.
+    Optional: Citrix admin folder path where the application will be organized.
+
+    - If not specified (null), the application will be created in the root folder
+    - If specified, the folder MUST exist in Citrix Cloud before deployment
+    - Use folder name without leading/trailing slashes
+
     Examples:
+      - null (default - root folder)
       - "Production" (single level)
       - "Production/Microsoft Office" (nested)
       - "Test/Utilities" (nested)
   EOT
   type        = string
+  default     = null
+  nullable    = true
 
   validation {
-    condition     = length(var.citrix_application_folder_path) > 0
-    error_message = "Application folder path cannot be empty."
-  }
-
-  validation {
-    condition     = !can(regex("^/|/$", var.citrix_application_folder_path))
-    error_message = "Application folder path should not start or end with a slash."
+    condition     = var.citrix_application_folder_path == null || (length(var.citrix_application_folder_path) > 0 && !can(regex("^/|/$", var.citrix_application_folder_path)))
+    error_message = "Application folder path must not be empty and should not start or end with a slash. Use null to place the application in the root folder."
   }
 }
 

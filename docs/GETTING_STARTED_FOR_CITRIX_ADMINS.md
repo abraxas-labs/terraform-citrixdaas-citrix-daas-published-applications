@@ -384,9 +384,11 @@ module "calculator" {
   # Citrix Organization
   # ============================================
   citrix_application_folder_path = "Production"
-  # ↑ Folder in Citrix Studio where app appears
+  # ↑ OPTIONAL: Folder in Citrix Studio where app appears
   # GUI: "Folder" dropdown
-  # ⚠️ This folder MUST exist in Citrix Cloud before running terraform apply
+  # - If specified: Folder MUST exist in Citrix Cloud
+  # - If omitted (or set to null): App will be created in root folder
+  # Example: citrix_application_folder_path = null  # creates in root
 
   citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"
   # ↑ ⚠️⚠️⚠️ CRITICAL: You MUST change this value! ⚠️⚠️⚠️
@@ -439,7 +441,7 @@ Here's how Terraform variables map to Citrix Studio fields:
 | Application Path | `citrix_application_command_line_executable` | `"C:\\Windows\\system32\\calc.exe"` |
 | Command Line Arguments | `citrix_application_command_line_arguments` | `""` |
 | Working Directory | `citrix_application_working_directory` | `"%HOMEDRIVE%%HOMEPATH%"` |
-| Folder | `citrix_application_folder_path` | `"Production"` |
+| Folder (Optional) | `citrix_application_folder_path` | `"Production"` or `null` (root) |
 | Delivery Group | `citrix_deliverygroup_name` | `"Production-DG"` |
 
 ---
@@ -742,7 +744,7 @@ Destroy complete! Resources: 1 destroyed.
 | `Error: Error reading Delivery Group YOUR-DELIVERY-GROUP-NAME`<br>or<br>`Error: Object does not exist` | **MOST COMMON ERROR #1:** You forgot to replace `"YOUR-DELIVERY-GROUP-NAME"` with your actual Delivery Group name | **Quick fix:**<br>1. Open Citrix Cloud → Studio → Delivery Groups<br>2. Copy the EXACT name from the list<br>3. Open your `main.tf` file<br>4. Find the line with `citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"`<br>5. Replace with your copied name: `citrix_deliverygroup_name = "Production-DG"`<br>6. Save and re-run `terraform plan`<br><br>**See Step 4.5 for detailed instructions** |
 | `Error: Error reading Delivery Group [YourName]`<br>(with actual name) | **MOST COMMON ERROR #2:** The Delivery Group name has a typo or wrong case | **Step-by-step fix:**<br>1. Check the error message - what name did Terraform try?<br>2. Open Citrix Cloud → Studio → Delivery Groups<br>3. Compare: Is your name EXACTLY the same? (case-sensitive!)<br>4. Copy the correct name from Studio<br>5. Update `citrix_deliverygroup_name` in your module call<br>6. Save and re-run `terraform plan`<br><br>**Example:**<br>❌ WRONG: `"production-dg"` vs. `"Production-DG"`<br>✅ CORRECT: Exact copy from Studio |
 | `Error: Invalid API credentials` / `Unknown Citrix API Client Id` | Customer ID, Client ID, or Secret is incorrect or not set | 1. Verify environment variables are set (Step 4)<br>2. Check Citrix Cloud → API Access<br>3. Create new credentials if needed |
-| `Error: Application folder path "Production" not found` | The folder doesn't exist in Citrix Studio | 1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply` |
+| `Error: Application folder path "Production" not found` | The specified folder doesn't exist in Citrix Studio | **Option 1 - Create folder:**<br>1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply`<br><br>**Option 2 - Use root folder:**<br>1. Remove the line `citrix_application_folder_path = "Production"`<br>2. Or set it to `null`<br>3. Re-run `terraform apply` |
 | `Error: Failed to query provider` | Citrix provider version issue | Run `terraform init -upgrade` |
 | `Error: citrix_application_command_line_executable: invalid value` | Executable path has invalid format | Use double backslashes: `C:\\Windows\\system32\\calc.exe` |
 
