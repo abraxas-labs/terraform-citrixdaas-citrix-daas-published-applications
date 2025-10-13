@@ -127,26 +127,18 @@ variable "citrix_deliverygroup_name" {
     condition     = !can(regex("(?i)^YOUR-", var.citrix_deliverygroup_name))
     error_message = <<-EOT
 
-      ❌ ERROR: You forgot to replace the placeholder "YOUR-DELIVERY-GROUP-NAME"!
+❌ You must replace "YOUR-DELIVERY-GROUP-NAME" with your actual Delivery Group name!
 
-      BEFORE running terraform plan/apply, you MUST:
+HOW TO FIX:
+  1. Open: https://citrix.cloud.com → Studio → Delivery Groups
+  2. Copy the EXACT name from the list (case-sensitive!)
+  3. Update: citrix_deliverygroup_name = "Your-Copied-Name"
 
-      1. Open Citrix Cloud in your browser:
-         → https://citrix.cloud.com
-         → Navigate to: Studio → Delivery Groups
+EXAMPLE:
+  ✅ citrix_deliverygroup_name = "Production-Windows-DG"
+  ❌ citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"
 
-      2. Copy the EXACT name of your Delivery Group
-         (Right-click on the name and select "Copy", or select and press Ctrl+C)
-
-      3. Update citrix_deliverygroup_name with the copied value
-         Example: citrix_deliverygroup_name = "Production-Windows-DG"
-
-      Common mistakes:
-        ❌ "production-dg" vs "Production-DG" (wrong case)
-        ❌ "Prod-DG" vs "Production-DG" (typo)
-        ❌ "YOUR-DELIVERY-GROUP-NAME" (forgot to change)
-
-      📖 Full instructions: docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md (Step 4.5)
+📖 Full guide: docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md (Step 4.5)
     EOT
   }
 }
