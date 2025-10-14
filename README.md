@@ -8,7 +8,7 @@
 
 Terraform module for creating and managing Citrix Published Applications in Citrix DaaS (Desktop as a Service).
 
-**Feedback**: If you enjoyed this module, please give this repo a star by clicking the star button at the top right of this page.
+**⭐ Please Star This Repo!** If you find this module helpful, please [**give us a star**](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/stargazers) — it helps others discover this project and motivates us to continue improving it!
 
 **Error Handling and General Questions**: If you encounter an error during module execution or have a general question, please create a new issue at the following link: [GitHub Issues](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues).
 
@@ -19,7 +19,7 @@ Terraform module for creating and managing Citrix Published Applications in Citr
 ```hcl
 module "calculator" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 0.6"
+  version = "~> 1.0.13"
 
   citrix_application_name                    = "calculator-app"
   citrix_application_published_name          = "Calculator"
