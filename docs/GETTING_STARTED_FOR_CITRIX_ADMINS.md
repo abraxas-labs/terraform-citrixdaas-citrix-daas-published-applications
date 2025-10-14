@@ -147,16 +147,101 @@ You need API credentials to allow Terraform to connect to Citrix Cloud.
 
 Terraform is the tool that reads your configuration files and creates resources in Citrix Cloud.
 
-#### **For Windows Users** (Most Citrix Admins):
+**Choose your operating system to see installation instructions:**
 
-We **strongly recommend** using **WSL2** (Windows Subsystem for Linux) instead of Windows-native Terraform:
-- ✅ Better compatibility with Terraform tools
-- ✅ Easier to follow documentation/examples
-- ✅ Works seamlessly with Git and other DevOps tools
+<details>
+<summary><strong>🪟 Windows Users (Click to expand)</strong></summary>
 
-**Option A: Install WSL2 + Terraform (Recommended)**
+#### Choose Your Installation Method
 
-1. **Install WSL2**:
+<details>
+<summary><strong>Option A: Manual Installation (Recommended for Windows Admins)</strong></summary>
+
+**Best for:** Traditional Windows administrators who prefer standard installations.
+
+**Installation Steps:**
+
+1. **Download Terraform:**
+   - Go to [HashiCorp Terraform Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
+   - Download: `terraform_1.13.3_windows_amd64.zip`
+
+2. **Extract and Install:**
+   - Extract the ZIP file to a folder (e.g., `C:\terraform\`)
+   - Add the folder to your system PATH:
+     - Right-click "This PC" → Properties → Advanced System Settings
+     - Click "Environment Variables"
+     - Under "System Variables", find "Path" and click "Edit"
+     - Click "New" and add the path (e.g., `C:\terraform\`)
+     - Click "OK" to save
+
+3. **Verify Installation:**
+   ```powershell
+   # Open a NEW PowerShell window
+   terraform --version
+   # Should output: Terraform v1.13.3
+   ```
+
+**⚠️ Common Mistake:** If you see "terraform: command not found", restart your PowerShell/Command Prompt window!
+
+**Proxy Configuration (if needed):**
+If your network requires a proxy server, set these environment variables:
+```powershell
+# Set proxy (replace x.x.x.x:8080 with your actual proxy)
+$env:HTTP_PROXY="http://x.x.x.x:8080"
+$env:HTTPS_PROXY="http://x.x.x.x:8080"
+
+# If proxy requires authentication
+$env:HTTP_PROXY="http://username:password@x.x.x.x:8080"
+$env:HTTPS_PROXY="http://username:password@x.x.x.x:8080"
+```
+
+</details>
+
+<details>
+<summary><strong>Option B: Chocolatey (Package Manager)</strong></summary>
+
+**Best for:** Windows admins who already use Chocolatey for software management.
+
+**Installation Steps:**
+
+1. **Install with Chocolatey:**
+   ```powershell
+   # Run in PowerShell (as Administrator)
+   choco install terraform
+   ```
+
+2. **Verify Installation:**
+   ```powershell
+   terraform --version
+   # Should output: Terraform v1.13.3
+   ```
+
+**Proxy Configuration (if needed):**
+If your network requires a proxy server, set these environment variables:
+```powershell
+# Set proxy (replace x.x.x.x:8080 with your actual proxy)
+$env:HTTP_PROXY="http://x.x.x.x:8080"
+$env:HTTPS_PROXY="http://x.x.x.x:8080"
+```
+
+**Additional Resources:**
+- [Chocolatey Installation](https://chocolatey.org/install)
+
+</details>
+
+<details>
+<summary><strong>Option C: WSL2 (For Advanced Users)</strong></summary>
+
+**Best for:** Developers and power users who need Linux compatibility.
+
+**Why WSL2?**
+- Better compatibility with some Terraform tools
+- Easier to follow Linux-based documentation
+- Works seamlessly with Git and DevOps tools
+
+**Installation Steps:**
+
+1. **Install WSL2:**
    ```powershell
    # Run in PowerShell (as Administrator)
    wsl --install
@@ -164,7 +249,7 @@ We **strongly recommend** using **WSL2** (Windows Subsystem for Linux) instead o
    ```
    [Official Microsoft WSL2 Installation Guide](https://docs.microsoft.com/en-us/windows/wsl/install)
 
-2. **Install Terraform in WSL2** (Latest Version: 1.13.3):
+2. **Install Terraform in WSL2:**
    ```bash
    # Open Ubuntu terminal (search "Ubuntu" in Start Menu)
 
@@ -180,65 +265,99 @@ We **strongly recommend** using **WSL2** (Windows Subsystem for Linux) instead o
    # Should output: Terraform v1.13.3
    ```
 
-**Option B: Windows Native (Alternative)**
+**Proxy Configuration (if needed):**
+If your network requires a proxy server, set these environment variables:
+```bash
+# Set proxy (replace x.x.x.x:8080 with your actual proxy)
+export HTTP_PROXY="http://x.x.x.x:8080"
+export HTTPS_PROXY="http://x.x.x.x:8080"
 
-Using [Chocolatey](https://chocolatey.org/):
-```powershell
-# Run in PowerShell (as Administrator)
-choco install terraform
+# If proxy requires authentication
+export HTTP_PROXY="http://username:password@x.x.x.x:8080"
+export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
 ```
 
-**Option C: Manual Download (If Chocolatey is not installed)**
+</details>
 
-If you don't have Chocolatey installed, download Terraform manually from the official HashiCorp website:
-
-1. Download the latest version from: [Direct Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
-2. Extract the ZIP file to a folder (e.g., `C:\terraform\`)
-3. Add the folder to your system PATH:
-   - Right-click "This PC" → Properties → Advanced System Settings
-   - Click "Environment Variables"
-   - Under "System Variables", find "Path" and click "Edit"
-   - Click "New" and add the path (e.g., `C:\terraform\`)
-   - Click "OK" to save
-4. Open a new PowerShell window and verify: `terraform --version`
-
-**Additional Resources**:
+**Additional Resources:**
 - [Terraform Installation Guide](https://developer.hashicorp.com/terraform/install)
 
----
+</details>
 
-#### **For macOS Users**:
+<details>
+<summary><strong>🍎 macOS Users (Click to expand)</strong></summary>
 
-**Option A: Install with Homebrew (Recommended)**
+#### Choose Your Installation Method
 
-```bash
-# Install Homebrew (if not already installed)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+<details>
+<summary><strong>Option A: Homebrew (Recommended)</strong></summary>
 
-# Install Terraform
-brew tap hashicorp/tap
-brew install hashicorp/tap/terraform
+**Best for:** Most macOS users (industry standard package manager).
 
-# Verify installation
-terraform --version
-# Should output: Terraform v1.13.3
-```
+**Installation Steps:**
 
-**Option B: Manual Installation**
-
-1. Download Terraform for macOS from [HashiCorp Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
-2. Unzip and move to `/usr/local/bin/`:
+1. **Install Homebrew (if not already installed):**
    ```bash
-   unzip terraform_1.13.3_darwin_amd64.zip
-   sudo mv terraform /usr/local/bin/
-   terraform --version
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
 
-**Detailed Installation Guide**: [HashiCorp Terraform CLI Installation](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+2. **Install Terraform:**
+   ```bash
+   brew tap hashicorp/tap
+   brew install hashicorp/tap/terraform
 
----
+   # Verify installation
+   terraform --version
+   # Should output: Terraform v1.13.3
+   ```
 
-#### **For Linux Users**:
+**Proxy Configuration (if needed):**
+If your network requires a proxy server, set these environment variables:
+```bash
+# Set proxy (replace x.x.x.x:8080 with your actual proxy)
+export HTTP_PROXY="http://x.x.x.x:8080"
+export HTTPS_PROXY="http://x.x.x.x:8080"
+
+# If proxy requires authentication
+export HTTP_PROXY="http://username:password@x.x.x.x:8080"
+export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
+```
+
+</details>
+
+<details>
+<summary><strong>Option B: Manual Installation</strong></summary>
+
+**Installation Steps:**
+
+1. **Download Terraform:**
+   - Download from [HashiCorp Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
+   - Choose: `terraform_1.13.3_darwin_amd64.zip` (Intel) or `terraform_1.13.3_darwin_arm64.zip` (Apple Silicon)
+
+2. **Install:**
+   ```bash
+   unzip terraform_1.13.3_darwin_*.zip
+   sudo mv terraform /usr/local/bin/
+
+   # Verify installation
+   terraform --version
+   # Should output: Terraform v1.13.3
+   ```
+
+**Proxy Configuration (if needed):**
+Same as Option A above.
+
+</details>
+
+**Additional Resources:**
+- [HashiCorp Terraform CLI Installation](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+
+</details>
+
+<details>
+<summary><strong>🐧 Linux Users (Click to expand)</strong></summary>
+
+**Installation Steps:**
 
 ```bash
 # Download Terraform 1.13.3
@@ -252,6 +371,20 @@ sudo mv terraform /usr/local/bin/
 terraform --version
 # Should output: Terraform v1.13.3
 ```
+
+**Proxy Configuration (if needed):**
+If your network requires a proxy server, set these environment variables:
+```bash
+# Set proxy (replace x.x.x.x:8080 with your actual proxy)
+export HTTP_PROXY="http://x.x.x.x:8080"
+export HTTPS_PROXY="http://x.x.x.x:8080"
+
+# If proxy requires authentication
+export HTTP_PROXY="http://username:password@x.x.x.x:8080"
+export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
+```
+
+</details>
 
 ---
 
@@ -458,59 +591,6 @@ After creating your API credentials in Citrix Cloud (Prerequisites Step 2), you 
 - ✅ Easy to rotate/update without changing code
 - ✅ Different credentials per environment (Dev/Test/Prod)
 - ✅ Industry standard security practice
-
----
-
-#### **Proxy Configuration (Optional)**
-
-**⚠️ If you are behind a corporate proxy, you MUST configure proxy settings BEFORE running `terraform init`!**
-
-If your network requires a proxy server to access the internet, Terraform needs to know about it. Set these environment variables **in addition to** your Citrix API credentials:
-
-**For Windows PowerShell**:
-```powershell
-# Set proxy configuration (replace x.x.x.x:8080 with your actual proxy address)
-$env:HTTP_PROXY="http://x.x.x.x:8080"
-$env:HTTPS_PROXY="http://x.x.x.x:8080"
-
-# If proxy requires authentication (optional)
-$env:HTTP_PROXY="http://username:password@x.x.x.x:8080"
-$env:HTTPS_PROXY="http://username:password@x.x.x.x:8080"
-
-# Verify proxy is set (optional)
-echo $env:HTTPS_PROXY
-```
-
-**For Linux/WSL**:
-```bash
-# Set proxy configuration (replace x.x.x.x:8080 with your actual proxy address)
-export HTTP_PROXY="http://x.x.x.x:8080"
-export HTTPS_PROXY="http://x.x.x.x:8080"
-
-# If proxy requires authentication (optional)
-export HTTP_PROXY="http://username:password@x.x.x.x:8080"
-export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
-
-# Verify proxy is set (optional)
-echo $HTTPS_PROXY
-```
-
-**For macOS**:
-```bash
-# Set proxy configuration (same as Linux)
-export HTTP_PROXY="http://x.x.x.x:8080"
-export HTTPS_PROXY="http://x.x.x.x:8080"
-
-# If proxy requires authentication (optional)
-export HTTP_PROXY="http://username:password@x.x.x.x:8080"
-export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
-
-# Verify proxy is set (optional)
-echo $HTTPS_PROXY
-```
-
-**Common Proxy Error**:
-If you see errors like `connection timeout` or `unable to download provider` during `terraform init`, it's likely a proxy configuration issue.
 
 ---
 
