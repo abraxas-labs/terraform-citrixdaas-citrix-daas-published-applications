@@ -17,11 +17,10 @@
   - [2. Citrix Cloud API Credentials](#2-citrix-cloud-api-credentials)
   - [3. Install Terraform](#3-install-terraform)
 - [Getting Started: Your First Published Application](#getting-started-your-first-published-application)
-  - [Step 1: Create Your Project Folder](#1️⃣-step-1-of-5-create-your-project-folder)
-  - [Step 2: Configure Citrix Connection](#2️⃣-step-2-of-5-configure-citrix-connection)
-  - [Step 3: Field Mapping Reference](#3️⃣-step-3-of-5-field-mapping-reference)
-  - [Step 4: Set API Credentials & Verify Delivery Group](#4️⃣-step-4-of-5-set-api-credentials--verify-delivery-group)
-  - [Step 5: Deploy Your Application](#5️⃣-step-5-of-5-deploy-your-application)
+  - [Step 1: Create Your Project Folder](#1️⃣-step-1-of-4-create-your-project-folder)
+  - [Step 2: Configure Citrix Connection](#2️⃣-step-2-of-4-configure-citrix-connection)
+  - [Step 3: Set API Credentials & Verify Delivery Group](#3️⃣-step-3-of-4-set-api-credentials--verify-delivery-group)
+  - [Step 4: Deploy Your Application](#4️⃣-step-4-of-4-deploy-your-application)
 - [Troubleshooting for Beginners](#troubleshooting-for-beginners)
 - [Next Steps: Becoming More Advanced](#next-steps-becoming-more-advanced)
 - [FAQ for Citrix Administrators](#faq-for-citrix-administrators)
@@ -418,7 +417,7 @@ terraform --version
 
 Let's create your first Citrix Published Application using Terraform. We'll publish the **Windows Calculator** as an example (just like you would in Citrix Studio).
 
-### 1️⃣ Step 1 of 5: Create Your Project Folder
+### 1️⃣ Step 1 of 4: Create Your Project Folder
 **⏱️ Time: 1 minute** | **Difficulty: ⭐☆☆**
 
 ```bash
@@ -429,7 +428,7 @@ cd my-citrix-apps
 
 ---
 
-### 2️⃣ Step 2 of 5: Configure Citrix Connection
+### 2️⃣ Step 2 of 4: Configure Citrix Connection
 **⏱️ Time: 5 minutes** | **Difficulty: ⭐⭐☆**
 
 In this step, you'll create 3 files: `terraform.tf`, `variables.tf`, and `main.tf`.
@@ -586,30 +585,12 @@ my-citrix-apps/
 
 **How Terraform reads credentials**:
 - Terraform automatically reads environment variables starting with `TF_VAR_`
-- You'll set these credentials in **Step 4** before deploying your application
+- You'll set these credentials in **Step 3** before deploying your application
 - This keeps credentials secure and out of your code
 
 ---
 
-### 3️⃣ Step 3 of 5: Field Mapping Reference
-**⏱️ Time: 2 minutes** | **Difficulty: ⭐☆☆**
-
-Here's how Terraform variables map to Citrix Studio fields:
-
-| Citrix Studio Field | Terraform Variable | Example Value |
-|---------------------|-------------------|---------------|
-| Application Name | `citrix_application_name` | `"calculator-app"` |
-| Published Name | `citrix_application_published_name` | `"Calculator"` |
-| Description | `citrix_application_description` | `"Windows Calculator"` |
-| Application Path | `citrix_application_command_line_executable` | `"C:\\Windows\\system32\\calc.exe"` |
-| Command Line Arguments | `citrix_application_command_line_arguments` | `""` |
-| Working Directory | `citrix_application_working_directory` | `"%HOMEDRIVE%%HOMEPATH%"` |
-| Folder (Optional) | `citrix_application_folder_path` | `"Production"` or `null` (root) |
-| Delivery Group | `citrix_deliverygroup_name` | `"Production-DG"` |
-
----
-
-### 4️⃣ Step 4 of 5: Set API Credentials & Verify Delivery Group
+### 3️⃣ Step 3 of 4: Set API Credentials & Verify Delivery Group
 **⏱️ Time: 5 minutes** | **Difficulty: ⭐⭐☆**
 
 **⚠️ IMPORTANT: Set credentials BEFORE running Terraform commands!**
@@ -737,12 +718,12 @@ Error: Delivery Group "YOUR-DELIVERY-GROUP-NAME" not found
 
 ---
 
-### 5️⃣ Step 5 of 5: Deploy Your Application
+### 4️⃣ Step 4 of 4: Deploy Your Application
 **⏱️ Time: 5 minutes** | **Difficulty: ⭐⭐☆**
 
 Now let's deploy the application to Citrix Cloud using the command line.
 
-**Open your terminal/command line** (use the SAME terminal where you set environment variables in Step 4):
+**Open your terminal/command line** (use the SAME terminal where you set environment variables in Step 3):
 - **Windows (WSL)**: Open "Ubuntu" from Start Menu
 - **Windows (Native)**: Open "Command Prompt" or "PowerShell"
 - **macOS**: Open "Terminal" (Applications → Utilities → Terminal)
@@ -886,9 +867,9 @@ Now that you've deployed your first app, you can:
 
 | Error Message | What It Means | Solution |
 |---------------|---------------|----------|
-| `Error: Error reading Delivery Group YOUR-DELIVERY-GROUP-NAME`<br>or<br>`Error: Object does not exist` | **MOST COMMON ERROR #1:** You forgot to replace `"YOUR-DELIVERY-GROUP-NAME"` with your actual Delivery Group name | **Quick fix:**<br>1. Open Citrix Cloud → Studio → Delivery Groups<br>2. Copy the EXACT name from the list<br>3. Open your `main.tf` file<br>4. Find the line with `citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"`<br>5. Replace with your copied name: `citrix_deliverygroup_name = "Production-DG"`<br>6. Save and re-run `terraform plan`<br><br>**See Step 4.5 for detailed instructions** |
+| `Error: Error reading Delivery Group YOUR-DELIVERY-GROUP-NAME`<br>or<br>`Error: Object does not exist` | **MOST COMMON ERROR #1:** You forgot to replace `"YOUR-DELIVERY-GROUP-NAME"` with your actual Delivery Group name | **Quick fix:**<br>1. Open Citrix Cloud → Studio → Delivery Groups<br>2. Copy the EXACT name from the list<br>3. Open your `main.tf` file<br>4. Find the line with `citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"`<br>5. Replace with your copied name: `citrix_deliverygroup_name = "Production-DG"`<br>6. Save and re-run `terraform plan`<br><br>**See Step 3 for detailed instructions** |
 | `Error: Error reading Delivery Group [YourName]`<br>(with actual name) | **MOST COMMON ERROR #2:** The Delivery Group name has a typo or wrong case | **Step-by-step fix:**<br>1. Check the error message - what name did Terraform try?<br>2. Open Citrix Cloud → Studio → Delivery Groups<br>3. Compare: Is your name EXACTLY the same? (case-sensitive!)<br>4. Copy the correct name from Studio<br>5. Update `citrix_deliverygroup_name` in your module call<br>6. Save and re-run `terraform plan`<br><br>**Example:**<br>❌ WRONG: `"production-dg"` vs. `"Production-DG"`<br>✅ CORRECT: Exact copy from Studio |
-| `Error: Invalid API credentials` / `Unknown Citrix API Client Id` | Customer ID, Client ID, or Secret is incorrect or not set | 1. Verify environment variables are set (Step 4)<br>2. Check Citrix Cloud → API Access<br>3. Create new credentials if needed |
+| `Error: Invalid API credentials` / `Unknown Citrix API Client Id` | Customer ID, Client ID, or Secret is incorrect or not set | 1. Verify environment variables are set (Step 3)<br>2. Check Citrix Cloud → API Access<br>3. Create new credentials if needed |
 | `Error: Application folder path "Production" not found` | The specified folder doesn't exist in Citrix Studio | **Option 1 - Create folder:**<br>1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply`<br><br>**Option 2 - Use root folder:**<br>1. Remove the line `citrix_application_folder_path = "Production"`<br>2. Or set it to `null`<br>3. Re-run `terraform apply` |
 | `Error: Failed to query provider` | Citrix provider version issue | Run `terraform init -upgrade` |
 | `Error: citrix_application_command_line_executable: invalid value` | Executable path has invalid format | Use double backslashes: `C:\\Windows\\system32\\calc.exe` |
