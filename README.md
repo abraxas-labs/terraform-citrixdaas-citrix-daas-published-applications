@@ -93,24 +93,6 @@ provider "citrix" {
 
 ## Examples
 
-### Basic Application
-
-```hcl
-module "notepad" {
-  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 0.6"
-
-  citrix_application_name                    = "notepad-app"
-  citrix_application_published_name          = "Notepad"
-  citrix_application_description             = "Text Editor"
-  citrix_application_command_line_executable = "C:\\Windows\\system32\\notepad.exe"
-  citrix_application_command_line_arguments  = ""
-  citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
-  citrix_application_folder_path             = "Production"
-  citrix_deliverygroup_name                  = "Production-DG"
-}
-```
-
 For more examples including visibility restrictions, custom icons, and bulk deployments, see:
 - [examples/](examples/) directory
 - [Advanced Examples Documentation](docs/EXAMPLES.md)

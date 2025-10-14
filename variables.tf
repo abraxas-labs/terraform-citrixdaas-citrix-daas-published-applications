@@ -105,37 +105,65 @@ variable "citrix_application_working_directory" {
 variable "citrix_deliverygroup_name" {
   description = <<-EOT
     Name of an existing Citrix Delivery Group that will host this application.
-    The delivery group must exist before creating the application.
-    Example: "Production-Windows-DG" or "Test-Delivery-Group"
+    The delivery group MUST exist before creating the application.
+
+    IMPORTANT BEFORE DEPLOYMENT:
+    1. Open Citrix Cloud -> Studio -> Delivery Groups
+    2. Copy the EXACT name (case-sensitive!)
+    3. Paste it here
+
+    Examples: "Production-Windows-DG", "Test-Delivery-Group"
+
+    Documentation: docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md
   EOT
   type        = string
 
   validation {
     condition     = length(var.citrix_deliverygroup_name) > 0
-    error_message = "Delivery group name cannot be empty."
+    error_message = "Delivery group name cannot be empty. Please copy the exact name from Citrix Studio -> Delivery Groups."
+  }
+
+  validation {
+    condition     = !can(regex("(?i)^YOUR-", var.citrix_deliverygroup_name))
+    error_message = <<-EOT
+
+❌ You must replace "YOUR-DELIVERY-GROUP-NAME" with your actual Delivery Group name!
+
+HOW TO FIX:
+  1. Open: https://citrix.cloud.com → Studio → Delivery Groups
+  2. Copy the EXACT name from the list (case-sensitive!)
+  3. Update: citrix_deliverygroup_name = "Your-Copied-Name"
+
+EXAMPLE:
+  ✅ citrix_deliverygroup_name = "Production-Windows-DG"
+  ❌ citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"
+
+📖 Full guide: docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md (Step 4.5)
+    EOT
   }
 }
 
 variable "citrix_application_folder_path" {
   description = <<-EOT
-    Citrix admin folder path where the application will be organized.
-    The folder must exist in Citrix Cloud before creating the application.
-    Use folder name without leading/trailing slashes.
+    Optional: Citrix admin folder path where the application will be organized.
+
+    - If not specified (null), the application will be created in the root folder
+    - If specified, the folder MUST exist in Citrix Cloud before deployment
+    - Use folder name without leading/trailing slashes
+
     Examples:
+      - null (default - root folder)
       - "Production" (single level)
       - "Production/Microsoft Office" (nested)
       - "Test/Utilities" (nested)
   EOT
   type        = string
+  default     = null
+  nullable    = true
 
   validation {
-    condition     = length(var.citrix_application_folder_path) > 0
-    error_message = "Application folder path cannot be empty."
-  }
-
-  validation {
-    condition     = !can(regex("^/|/$", var.citrix_application_folder_path))
-    error_message = "Application folder path should not start or end with a slash."
+    condition     = var.citrix_application_folder_path == null || (var.citrix_application_folder_path != "" && !can(regex("^/|/$", var.citrix_application_folder_path)))
+    error_message = "Application folder path must not be empty and should not start or end with a slash. Use null to place the application in the root folder."
   }
 }
 

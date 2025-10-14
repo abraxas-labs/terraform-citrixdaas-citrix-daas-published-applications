@@ -20,9 +20,9 @@
   - [Step 1: Create Your Project Folder](#step-1-create-your-project-folder)
   - [Step 2: Configure Citrix Connection](#step-2-configure-citrix-connection)
   - [Step 3: Field Mapping Reference](#step-3-field-mapping-reference)
-  - [Step 4: Deploy Your Application](#step-4-deploy-your-application)
-  - [Step 5: Verify in Citrix Cloud](#step-5-verify-in-citrix-cloud)
-  - [Step 6: Securely Store Credentials](#step-6-securely-store-credentials)
+  - [Step 4: Set API Credentials](#step-4-set-api-credentials)
+  - [Step 5: Deploy Your Application](#step-5-deploy-your-application)
+  - [Step 6: Verify in Citrix Cloud](#step-6-verify-in-citrix-cloud)
 - [Troubleshooting for Beginners](#troubleshooting-for-beginners)
 - [Next Steps: Becoming More Advanced](#next-steps-becoming-more-advanced)
 - [FAQ for Citrix Administrators](#faq-for-citrix-administrators)
@@ -107,11 +107,12 @@ You must already have the following in Citrix Cloud:
   <!-- SCREENSHOT PLACEHOLDER: Citrix Studio Delivery Groups list -->
 - ✓ **Machine Catalog with VDAs** (Virtual Delivery Agents) assigned to the Delivery Group
   - How to check: Citrix Cloud → Studio → Machine Catalogs
-- ✓ **Application Folder** created (e.g., "Production", "Applications")
+- **Application Folder** (optional) - If you want to organize apps into folders
   - How to check: Citrix Cloud → Studio → Applications → Folders
+  - **Note**: Folders are optional! Apps can be created in the root folder without any folder structure
   <!-- SCREENSHOT PLACEHOLDER: Citrix Studio Application Folders -->
 
-> **Note**: This module creates **Published Applications** only. It does NOT create Delivery Groups, Machine Catalogs, or VDAs—those must exist beforehand.
+> **Note**: This module creates **Published Applications** only. It does NOT create Delivery Groups, Machine Catalogs, or VDAs—those must exist beforehand. Application folders are optional.
 
 ---
 
@@ -187,9 +188,22 @@ Using [Chocolatey](https://chocolatey.org/):
 choco install terraform
 ```
 
-Or download manually from the official HashiCorp website:
+**Option C: Manual Download (If Chocolatey is not installed)**
+
+If you don't have Chocolatey installed, download Terraform manually from the official HashiCorp website:
+
+1. Download the latest version from: [Direct Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
+2. Extract the ZIP file to a folder (e.g., `C:\terraform\`)
+3. Add the folder to your system PATH:
+   - Right-click "This PC" → Properties → Advanced System Settings
+   - Click "Environment Variables"
+   - Under "System Variables", find "Path" and click "Edit"
+   - Click "New" and add the path (e.g., `C:\terraform\`)
+   - Click "OK" to save
+4. Open a new PowerShell window and verify: `terraform --version`
+
+**Additional Resources**:
 - [Terraform Installation Guide](https://developer.hashicorp.com/terraform/install)
-- [Direct Downloads](https://releases.hashicorp.com/terraform/1.13.3/)
 
 ---
 
@@ -335,7 +349,7 @@ This file describes the Published Application you want to create (like filling o
 # main.tf
 module "calculator" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 0.6"
+  version = "=0.5.8"
 
   # ============================================
   # Application Identity
@@ -359,7 +373,7 @@ module "calculator" {
   # ↑ Path to the .exe file on the VDA (Virtual Delivery Agent)
   # GUI: "Application Path" field
 
-  citrix_application_command_line_arguments = ""
+  citrix_application_command_line_arguments = "C:\\Windows\\system32\\"
   # ↑ Command line arguments (empty for Calculator)
   # GUI: "Command Line Arguments" field
 
@@ -371,12 +385,29 @@ module "calculator" {
   # Citrix Organization
   # ============================================
   citrix_application_folder_path = "Production"
-  # ↑ Folder in Citrix Studio where app appears
+  # ↑ OPTIONAL: Folder in Citrix Studio where app appears
   # GUI: "Folder" dropdown
-  # ⚠️ This folder MUST exist in Citrix Cloud before running terraform apply
+  # - If specified: Folder MUST exist in Citrix Cloud
+  # - If omitted (or set to null): App will be created in root folder
+  # Example: citrix_application_folder_path = null  # creates in root
 
   citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"
-  # ↑ Replace with your actual Delivery Group name (e.g., "Production-DG")
+  # ↑ ⚠️⚠️⚠️ CRITICAL: You MUST change this value! ⚠️⚠️⚠️
+  #
+  # BEFORE running terraform plan/apply:
+  # 1. Open Citrix Cloud → Studio → Delivery Groups
+  # 2. Copy the EXACT name (case-sensitive!) from the list
+  # 3. Replace "YOUR-DELIVERY-GROUP-NAME" with that exact name
+  #
+  # Examples of CORRECT format:
+  #   ✅ "Production-DG"
+  #   ✅ "Test-Windows-DG"
+  #
+  # Common mistakes to AVOID:
+  #   ❌ Typos: "Production-DG" vs. "Produktion-DG"
+  #   ❌ Wrong case: "production-dg" vs. "Production-DG"
+  #   ❌ Forgetting to change: "YOUR-DELIVERY-GROUP-NAME"
+  #
   # GUI: "Delivery Group" dropdown
   # ⚠️ This Delivery Group MUST exist in Citrix Cloud
 }
@@ -394,7 +425,7 @@ my-citrix-apps/
 
 **How Terraform reads credentials**:
 - Terraform automatically reads environment variables starting with `TF_VAR_`
-- You'll set these credentials in **Step 7** after deploying your first application
+- You'll set these credentials in **Step 4** before deploying your application
 - This keeps credentials secure and out of your code
 
 ---
@@ -411,16 +442,198 @@ Here's how Terraform variables map to Citrix Studio fields:
 | Application Path | `citrix_application_command_line_executable` | `"C:\\Windows\\system32\\calc.exe"` |
 | Command Line Arguments | `citrix_application_command_line_arguments` | `""` |
 | Working Directory | `citrix_application_working_directory` | `"%HOMEDRIVE%%HOMEPATH%"` |
-| Folder | `citrix_application_folder_path` | `"Production"` |
+| Folder (Optional) | `citrix_application_folder_path` | `"Production"` or `null` (root) |
 | Delivery Group | `citrix_deliverygroup_name` | `"Production-DG"` |
 
 ---
 
-### Step 4: Deploy Your Application
+### Step 4: Set API Credentials
+
+**⚠️ IMPORTANT: Set credentials BEFORE running Terraform commands!**
+
+After creating your API credentials in Citrix Cloud (Prerequisites Step 2), you must store them securely as **environment variables**. Terraform will automatically read these variables when you run `terraform plan` or `terraform apply`.
+
+**Why use environment variables?**
+- ✅ Credentials never appear in code or Git history
+- ✅ Easy to rotate/update without changing code
+- ✅ Different credentials per environment (Dev/Test/Prod)
+- ✅ Industry standard security practice
+
+---
+
+#### **Proxy Configuration (Optional)**
+
+**⚠️ If you are behind a corporate proxy, you MUST configure proxy settings BEFORE running `terraform init`!**
+
+If your network requires a proxy server to access the internet, Terraform needs to know about it. Set these environment variables **in addition to** your Citrix API credentials:
+
+**For Windows PowerShell**:
+```powershell
+# Set proxy configuration (replace x.x.x.x:8080 with your actual proxy address)
+$env:HTTP_PROXY="http://x.x.x.x:8080"
+$env:HTTPS_PROXY="http://x.x.x.x:8080"
+
+# If proxy requires authentication (optional)
+$env:HTTP_PROXY="http://username:password@x.x.x.x:8080"
+$env:HTTPS_PROXY="http://username:password@x.x.x.x:8080"
+
+# Verify proxy is set (optional)
+echo $env:HTTPS_PROXY
+```
+
+**For Linux/WSL**:
+```bash
+# Set proxy configuration (replace x.x.x.x:8080 with your actual proxy address)
+export HTTP_PROXY="http://x.x.x.x:8080"
+export HTTPS_PROXY="http://x.x.x.x:8080"
+
+# If proxy requires authentication (optional)
+export HTTP_PROXY="http://username:password@x.x.x.x:8080"
+export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
+
+# Verify proxy is set (optional)
+echo $HTTPS_PROXY
+```
+
+**For macOS**:
+```bash
+# Set proxy configuration (same as Linux)
+export HTTP_PROXY="http://x.x.x.x:8080"
+export HTTPS_PROXY="http://x.x.x.x:8080"
+
+# If proxy requires authentication (optional)
+export HTTP_PROXY="http://username:password@x.x.x.x:8080"
+export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
+
+# Verify proxy is set (optional)
+echo $HTTPS_PROXY
+```
+
+**Common Proxy Error**:
+If you see errors like `connection timeout` or `unable to download provider` during `terraform init`, it's likely a proxy configuration issue.
+
+---
+
+**For Linux/WSL Users**:
+
+Open your terminal and set the credentials as environment variables:
+
+```bash
+# Set Citrix API credentials as environment variables
+export TF_VAR_citrix_customer_id="your-customer-id-here"
+export TF_VAR_citrix_client_id="your-client-id-here"
+export TF_VAR_citrix_client_secret="your-client-secret-here"
+
+# Verify they're set (optional)
+echo $TF_VAR_citrix_customer_id
+```
+
+---
+
+**For Windows PowerShell Users**:
+
+Open PowerShell and set the credentials:
+
+```powershell
+# Set Citrix API credentials as environment variables
+$env:TF_VAR_citrix_customer_id="your-customer-id-here"
+$env:TF_VAR_citrix_client_id="your-client-id-here"
+$env:TF_VAR_citrix_client_secret="your-client-secret-here"
+
+# Verify they're set (optional)
+echo $env:TF_VAR_citrix_customer_id
+```
+
+---
+
+**For macOS Users**:
+
+```bash
+# Set Citrix API credentials as environment variables (same as Linux)
+export TF_VAR_citrix_customer_id="your-customer-id-here"
+export TF_VAR_citrix_client_id="your-client-id-here"
+export TF_VAR_citrix_client_secret="your-client-secret-here"
+
+# Verify they're set (optional)
+echo $TF_VAR_citrix_customer_id
+```
+
+---
+
+> **Note**: These environment variables are temporary and only last for the current terminal session. For permanent storage, you can add them to:
+> - **Linux/WSL/macOS**: `~/.bashrc`, `~/.zshrc`, or `~/.bash_profile`
+> - **Windows**: System Environment Variables (Start → "Environment Variables")
+
+**✅ Credentials are now set!** You can proceed to deploy your application.
+
+---
+
+### Step 4.5: Avoid the #1 Beginner Mistake!
+
+**⚠️ BEFORE running `terraform plan` - Complete this checkpoint!**
+
+The most common error for Terraform beginners is using an incorrect Delivery Group name. Let's prevent this before it happens:
+
+#### Checkpoint: Delivery Group Name Verification
+
+**Follow these steps IN ORDER:**
+
+1. **Open Citrix Cloud in your browser:**
+   - Go to [https://citrix.cloud.com](https://citrix.cloud.com)
+   - Navigate to: **Studio → Delivery Groups**
+
+<!-- SCREENSHOT PLACEHOLDER: Citrix Studio showing Delivery Groups list with names highlighted -->
+
+2. **Find your Delivery Group:**
+   - Look at the list of Delivery Groups
+   - Choose the one you want to use for this application
+   - **Copy the name EXACTLY** (right-click → Copy, or select and Ctrl+C)
+
+3. **Update your `main.tf` file:**
+   - Open `main.tf` in your text editor
+   - Find line 391: `citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"`
+   - **Paste** the exact name you just copied (replace `"YOUR-DELIVERY-GROUP-NAME"`)
+   - **Save the file** (Ctrl+S)
+
+4. **Double-check (IMPORTANT!):**
+   ```bash
+   # View the line to verify it's correct
+   grep citrix_deliverygroup_name main.tf
+
+   # Expected output example:
+   #   citrix_deliverygroup_name = "Production-Windows-DG"
+   ```
+
+#### Common Mistakes to Avoid
+
+| ❌ WRONG | ✅ CORRECT | Why It Fails |
+|---------|-----------|--------------|
+| `"production-dg"` | `"Production-DG"` | Case mismatch (lowercase vs. uppercase) |
+| `"Production-DG "` | `"Production-DG"` | Extra space at the end |
+| `"YOUR-DELIVERY-GROUP-NAME"` | `"Production-DG"` | Forgot to replace placeholder |
+| `"Prod-DG"` | `"Production-DG"` | Typo/abbreviation doesn't match |
+
+#### What Happens If You Skip This?
+
+You'll see this error when running `terraform plan`:
+
+```
+Error: Delivery Group "YOUR-DELIVERY-GROUP-NAME" not found
+
+  with data.citrix_delivery_group.this,
+  on main.tf line 17, in data "citrix_delivery_group" "this":
+  17: data "citrix_delivery_group" "this" {
+```
+
+**To fix:** Come back to this checkpoint and follow the steps above.
+
+---
+
+### Step 5: Deploy Your Application
 
 Now let's deploy the application to Citrix Cloud using the command line.
 
-**Open your terminal/command line**:
+**Open your terminal/command line** (use the SAME terminal where you set environment variables in Step 4):
 - **Windows (WSL)**: Open "Ubuntu" from Start Menu
 - **Windows (Native)**: Open "Command Prompt" or "PowerShell"
 - **macOS**: Open "Terminal" (Applications → Utilities → Terminal)
@@ -511,7 +724,7 @@ Destroy complete! Resources: 1 destroyed.
 
 ---
 
-### Step 5: Verify in Citrix Cloud
+### Step 6: Verify in Citrix Cloud
 
 1. Log into **Citrix Cloud**: [https://citrix.cloud.com](https://citrix.cloud.com)
 2. Navigate to: **Studio → Applications → Production** (your folder)
@@ -523,75 +736,16 @@ Destroy complete! Resources: 1 destroyed.
 
 ---
 
-### Step 6: Securely Store Credentials
-
-**⚠️ IMPORTANT: Do NOT commit API credentials to Git or code files!**
-
-Now that you've deployed your first application, let's properly secure your API credentials using **environment variables**.
-
-After creating your API credentials in Citrix Cloud (Prerequisites Step 2), store them securely:
-
-**For Linux/WSL Users**:
-
-Open your terminal and set the credentials as environment variables:
-
-```bash
-# Set Citrix API credentials as environment variables
-export TF_VAR_client_id="your-client-id-here"
-export TF_VAR_client_secret="your-client-secret-here"
-export TF_VAR_customer_id="your-customer-id-here"
-
-# Verify they're set (optional)
-echo $TF_VAR_client_id
-```
-
-**For Windows PowerShell Users**:
-
-Open PowerShell and set the credentials:
-
-```powershell
-# Set Citrix API credentials as environment variables
-$env:TF_VAR_client_id="your-client-id-here"
-$env:TF_VAR_client_secret="your-client-secret-here"
-$env:TF_VAR_customer_id="your-customer-id-here"
-
-# Verify they're set (optional)
-echo $env:TF_VAR_client_id
-```
-
-**For macOS Users**:
-
-```bash
-# Set Citrix API credentials as environment variables (same as Linux)
-export TF_VAR_client_id="your-client-id-here"
-export TF_VAR_client_secret="your-client-secret-here"
-export TF_VAR_customer_id="your-customer-id-here"
-
-# Verify they're set (optional)
-echo $TF_VAR_client_id
-```
-
-> **Note**: These environment variables are temporary and only last for the current terminal session. For permanent storage, you can add them to:
-> - **Linux/WSL/macOS**: `~/.bashrc`, `~/.zshrc`, or `~/.bash_profile`
-> - **Windows**: System Environment Variables (Start → "Environment Variables")
-
-**Why use environment variables?**
-- ✅ Credentials never appear in code or Git history
-- ✅ Easy to rotate/update without changing code
-- ✅ Different credentials per environment (Dev/Test/Prod)
-- ✅ Industry standard security practice
-
----
-
 ## Troubleshooting for Beginners
 
 ### Common Errors and Solutions
 
 | Error Message | What It Means | Solution |
 |---------------|---------------|----------|
-| `Error: Delivery Group "Production-DG" not found` | The Delivery Group doesn't exist in Citrix Cloud | 1. Log into Citrix Studio<br>2. Check Delivery Groups list<br>3. Update `citrix_deliverygroup_name` with the correct name |
-| `Error: Invalid API credentials` | Customer ID, Client ID, or Secret is incorrect | 1. Go to Citrix Cloud → API Access<br>2. Create new credentials<br>3. Update environment variables (Step 7) |
-| `Error: Application folder path "Production" not found` | The folder doesn't exist in Citrix Studio | 1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply` |
+| `Error: Error reading Delivery Group YOUR-DELIVERY-GROUP-NAME`<br>or<br>`Error: Object does not exist` | **MOST COMMON ERROR #1:** You forgot to replace `"YOUR-DELIVERY-GROUP-NAME"` with your actual Delivery Group name | **Quick fix:**<br>1. Open Citrix Cloud → Studio → Delivery Groups<br>2. Copy the EXACT name from the list<br>3. Open your `main.tf` file<br>4. Find the line with `citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"`<br>5. Replace with your copied name: `citrix_deliverygroup_name = "Production-DG"`<br>6. Save and re-run `terraform plan`<br><br>**See Step 4.5 for detailed instructions** |
+| `Error: Error reading Delivery Group [YourName]`<br>(with actual name) | **MOST COMMON ERROR #2:** The Delivery Group name has a typo or wrong case | **Step-by-step fix:**<br>1. Check the error message - what name did Terraform try?<br>2. Open Citrix Cloud → Studio → Delivery Groups<br>3. Compare: Is your name EXACTLY the same? (case-sensitive!)<br>4. Copy the correct name from Studio<br>5. Update `citrix_deliverygroup_name` in your module call<br>6. Save and re-run `terraform plan`<br><br>**Example:**<br>❌ WRONG: `"production-dg"` vs. `"Production-DG"`<br>✅ CORRECT: Exact copy from Studio |
+| `Error: Invalid API credentials` / `Unknown Citrix API Client Id` | Customer ID, Client ID, or Secret is incorrect or not set | 1. Verify environment variables are set (Step 4)<br>2. Check Citrix Cloud → API Access<br>3. Create new credentials if needed |
+| `Error: Application folder path "Production" not found` | The specified folder doesn't exist in Citrix Studio | **Option 1 - Create folder:**<br>1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply`<br><br>**Option 2 - Use root folder:**<br>1. Remove the line `citrix_application_folder_path = "Production"`<br>2. Or set it to `null`<br>3. Re-run `terraform apply` |
 | `Error: Failed to query provider` | Citrix provider version issue | Run `terraform init -upgrade` |
 | `Error: citrix_application_command_line_executable: invalid value` | Executable path has invalid format | Use double backslashes: `C:\\Windows\\system32\\calc.exe` |
 
