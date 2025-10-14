@@ -147,14 +147,27 @@ You need API credentials to allow Terraform to connect to Citrix Cloud.
 
 Terraform is the tool that reads your configuration files and creates resources in Citrix Cloud.
 
+**⚡ Quick Start Guide (Most Common Setups):**
+
+| You are a... | Recommended Installation | Jump to Instructions |
+|--------------|-------------------------|----------------------|
+| Windows Citrix Admin | Manual Installation | [→ Windows Manual](#windows-manual) |
+| Windows Developer/DevOps | Chocolatey or WSL2 | [→ Windows Options](#windows-options) |
+| macOS User | Homebrew | [→ macOS Homebrew](#macos-homebrew) |
+| Linux Admin | wget/apt | [→ Linux](#linux-installation) |
+
+**Not sure which option to choose?** Expand your platform below to see all available installation methods.
+
+---
+
 **Choose your operating system to see installation instructions:**
 
-<details>
+<details id="windows-options">
 <summary><strong>🪟 Windows Users (Click to expand)</strong></summary>
 
 #### Choose Your Installation Method
 
-<details>
+<details id="windows-manual">
 <summary><strong>Option A: Manual Installation (Recommended for Windows Admins)</strong></summary>
 
 **Best for:** Traditional Windows administrators who prefer standard installations.
@@ -181,7 +194,10 @@ Terraform is the tool that reads your configuration files and creates resources 
    # Should output: Terraform v1.13.3
    ```
 
-**⚠️ Common Mistake:** If you see "terraform: command not found", restart your PowerShell/Command Prompt window!
+**⚠️ Common Mistakes:**
+- **"terraform: command not found"** → You forgot to restart your PowerShell/Command Prompt window! Close and reopen it.
+- **"The system cannot find the path specified"** → Check if you added the correct path to the PATH environment variable (e.g., `C:\terraform\`).
+- **Permission errors** → Make sure you extracted the file to a folder where you have write permissions.
 
 **Proxy Configuration (if needed):**
 If your network requires a proxy server, set these environment variables:
@@ -215,6 +231,10 @@ $env:HTTPS_PROXY="http://username:password@x.x.x.x:8080"
    terraform --version
    # Should output: Terraform v1.13.3
    ```
+
+**⚠️ Common Mistakes:**
+- **"terraform: command not found"** → Chocolatey installation incomplete. Try closing and reopening PowerShell as Administrator.
+- **"choco: command not found"** → Chocolatey is not installed. Install it first from [chocolatey.org/install](https://chocolatey.org/install).
 
 **Proxy Configuration (if needed):**
 If your network requires a proxy server, set these environment variables:
@@ -265,6 +285,11 @@ $env:HTTPS_PROXY="http://x.x.x.x:8080"
    # Should output: Terraform v1.13.3
    ```
 
+**⚠️ Common Mistakes:**
+- **"bash: terraform: command not found"** → The binary is not in your PATH. Did you run `sudo mv terraform /usr/local/bin/`?
+- **"Permission denied"** → You forgot to use `sudo` when moving the file. Re-run: `sudo mv terraform /usr/local/bin/`
+- **WSL-specific:** If you're in WSL but terraform doesn't work, make sure you installed it inside WSL, not in Windows.
+
 **Proxy Configuration (if needed):**
 If your network requires a proxy server, set these environment variables:
 ```bash
@@ -284,12 +309,12 @@ export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
 
 </details>
 
-<details>
+<details id="macos-installation">
 <summary><strong>🍎 macOS Users (Click to expand)</strong></summary>
 
 #### Choose Your Installation Method
 
-<details>
+<details id="macos-homebrew">
 <summary><strong>Option A: Homebrew (Recommended)</strong></summary>
 
 **Best for:** Most macOS users (industry standard package manager).
@@ -310,6 +335,11 @@ export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
    terraform --version
    # Should output: Terraform v1.13.3
    ```
+
+**⚠️ Common Mistakes:**
+- **"command not found: terraform"** → Homebrew didn't add Terraform to PATH. Try: `brew link hashicorp/tap/terraform`
+- **"brew: command not found"** → Homebrew is not installed. Install it first from [brew.sh](https://brew.sh)
+- **Apple Silicon users:** Make sure you're using the correct Homebrew version (arm64, not x86_64).
 
 **Proxy Configuration (if needed):**
 If your network requires a proxy server, set these environment variables:
@@ -344,6 +374,11 @@ export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
    # Should output: Terraform v1.13.3
    ```
 
+**⚠️ Common Mistakes:**
+- **"command not found: terraform"** → The binary is not in your PATH. Did you run `sudo mv terraform /usr/local/bin/`?
+- **"Permission denied"** → You forgot to use `sudo` when moving the file.
+- **Wrong architecture:** Intel Macs need `darwin_amd64.zip`, Apple Silicon needs `darwin_arm64.zip`.
+
 **Proxy Configuration (if needed):**
 Same as Option A above.
 
@@ -354,7 +389,7 @@ Same as Option A above.
 
 </details>
 
-<details>
+<details id="linux-installation">
 <summary><strong>🐧 Linux Users (Click to expand)</strong></summary>
 
 **Installation Steps:**
@@ -371,6 +406,11 @@ sudo mv terraform /usr/local/bin/
 terraform --version
 # Should output: Terraform v1.13.3
 ```
+
+**⚠️ Common Mistakes:**
+- **"bash: terraform: command not found"** → The binary is not in your PATH. Did you run `sudo mv terraform /usr/local/bin/`?
+- **"Permission denied"** → You forgot to use `sudo` when moving the file. Re-run: `sudo mv terraform /usr/local/bin/`
+- **"No such file or directory"** → Make sure you downloaded the correct version for your Linux distribution (amd64 for most systems).
 
 **Proxy Configuration (if needed):**
 If your network requires a proxy server, set these environment variables:
