@@ -136,19 +136,6 @@ You need API credentials to allow Terraform to connect to Citrix Cloud.
 
 Terraform is the tool that reads your configuration files and creates resources in Citrix Cloud.
 
-**⚡ Quick Start Guide (Most Common Setups):**
-
-| You are a... | Recommended Installation | Jump to Instructions |
-|--------------|-------------------------|----------------------|
-| Windows Citrix Admin | Manual Installation | [→ Windows Manual](#windows-manual) |
-| Windows Developer/DevOps | Chocolatey or WSL2 | [→ Windows Options](#windows-options) |
-| macOS User | Homebrew | [→ macOS Homebrew](#macos-homebrew) |
-| Linux Admin | wget/apt | [→ Linux](#linux-installation) |
-
-**Not sure which option to choose?** Expand your platform below to see all available installation methods.
-
----
-
 **Choose your operating system to see installation instructions:**
 
 <a id="windows-options"></a>
