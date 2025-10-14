@@ -152,7 +152,7 @@ Terraform is the tool that reads your configuration files and creates resources 
 **Choose your operating system to see installation instructions:**
 
 <a id="windows-options"></a>
-<details>
+<details open>
 <summary><strong>🪟 Windows Users (Click to expand)</strong></summary>
 
 #### Choose Your Installation Method
@@ -301,7 +301,7 @@ export HTTPS_PROXY="http://username:password@x.x.x.x:8080"
 </details>
 
 <a id="macos-installation"></a>
-<details>
+<details open>
 <summary><strong>🍎 macOS Users (Click to expand)</strong></summary>
 
 #### Choose Your Installation Method
@@ -383,7 +383,7 @@ Same as Option A above.
 </details>
 
 <a id="linux-installation"></a>
-<details>
+<details open>
 <summary><strong>🐧 Linux Users (Click to expand)</strong></summary>
 
 **Installation Steps:**
