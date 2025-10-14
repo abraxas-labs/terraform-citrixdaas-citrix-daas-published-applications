@@ -168,63 +168,6 @@ You need API credentials to allow Terraform to connect to Citrix Cloud.
 
 Terraform is the tool that reads your configuration files and creates resources in Citrix Cloud.
 
----
-
-#### 🎯 Quick Decision Guide: Which Installation Method?
-
-```mermaid
-flowchart TD
-    Start[What OS do you use?] --> Windows{Windows}
-    Start --> Mac{macOS}
-    Start --> Linux{Linux}
-
-    Windows --> WinPkgMgr{Do you use<br/>Chocolatey?}
-    WinPkgMgr -->|Yes| Choco[Use Chocolatey<br/>✅ Fastest]
-    WinPkgMgr -->|No| WinAdvanced{Need Linux<br/>tools/compatibility?}
-    WinAdvanced -->|Yes| WSL[Use WSL2<br/>⚡ Best for DevOps]
-    WinAdvanced -->|No| WinManual[Manual Installation<br/>📦 Traditional]
-
-    Mac --> MacPkgMgr{Do you have<br/>Homebrew?}
-    MacPkgMgr -->|Yes| Brew[Use Homebrew<br/>✅ Fastest]
-    MacPkgMgr -->|No| MacManual[Manual Installation<br/>📦 Simple]
-
-    Linux --> LinuxInstall[Manual Installation<br/>📦 Standard]
-
-    Choco --> InstallDone[✅ Installation Complete]
-    WSL --> InstallDone
-    WinManual --> InstallDone
-    Brew --> InstallDone
-    MacManual --> InstallDone
-    LinuxInstall --> InstallDone
-
-    style Start fill:#e1f5ff
-    style Choco fill:#c8e6c9
-    style WSL fill:#fff9c4
-    style WinManual fill:#f0f0f0
-    style Brew fill:#c8e6c9
-    style MacManual fill:#f0f0f0
-    style LinuxInstall fill:#f0f0f0
-    style InstallDone fill:#a5d6a7
-```
-
-**👉 Click your situation below to jump to instructions:**
-
-- **Windows:**
-  - [I use Chocolatey](#windows-chocolatey) ✅ Recommended if you have it
-  - [I need Linux tools (WSL2)](#windows-wsl2) ⚡ For DevOps workflows
-  - [Manual installation](#windows-manual) 📦 Traditional Windows method
-
-- **macOS:**
-  - [I have Homebrew](#macos-homebrew) ✅ Recommended
-  - [Manual installation](#macos-manual) 📦 Simple alternative
-
-- **Linux:**
-  - [Install Terraform](#linux-installation) 📦 Standard method
-
----
-
-**Choose your operating system to see detailed installation instructions:**
-
 <a id="windows-options"></a>
 <details open>
 <summary><strong>🪟 Windows Users (Click to expand)</strong></summary>
