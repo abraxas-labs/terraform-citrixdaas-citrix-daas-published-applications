@@ -467,7 +467,7 @@ terraform {
   required_providers {
     citrix = {
       source  = "citrix/citrix"
-      version = "~> 1.0.7"
+      version = "~> 1.0.13"
     }
   }
 }
@@ -557,7 +557,7 @@ module "calculator" {
   # ============================================
   # Citrix Organization
   # ============================================
-  citrix_application_folder_path = "Production"
+  # citrix_application_folder_path = "Production"
   # ↑ OPTIONAL: Folder in Citrix Studio where app appears
   # GUI: "Folder" dropdown
   # - If specified: Folder MUST exist in Citrix Cloud
