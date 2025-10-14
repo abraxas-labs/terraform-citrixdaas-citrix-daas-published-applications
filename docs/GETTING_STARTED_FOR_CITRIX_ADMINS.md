@@ -53,24 +53,13 @@ If you're a Citrix Administrator used to clicking through Citrix Studio, this mo
 <!-- SCREENSHOT PLACEHOLDER: Citrix Studio "Create Application" wizard -->
 
 ### The Automated Way (This Module):
-1. Write a configuration file describing your application (see example below)
+1. Write a configuration file describing your application
 2. Run `terraform apply`
 3. **Time**: ~30 seconds per application (plus, you can deploy 100 apps as easily as 1)
 
-```hcl
-module "calculator" {
-  source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 0.6"
-
-  citrix_application_name                    = "calculator-app"
-  citrix_application_published_name          = "Calculator"
-  citrix_application_command_line_executable = "C:\\Windows\\system32\\calc.exe"
-  citrix_deliverygroup_name                  = "Production-DG"
-  citrix_application_folder_path             = "Production"
-}
-```
-
 **Result**: Same published application, same user experience—just created with code.
+
+**📖 See detailed step-by-step instructions below**, starting with [Prerequisites](#prerequisites-what-you-need-before-starting).
 
 ---
 
