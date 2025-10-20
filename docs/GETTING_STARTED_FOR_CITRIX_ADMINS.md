@@ -23,7 +23,6 @@
   - [Step 5: Deploy Your Application](#step-5-deploy-your-application)
   - [Step 6: Verify in Citrix Cloud](#step-6-verify-in-citrix-cloud)
 - [Troubleshooting for Beginners](#troubleshooting-for-beginners)
-- [Next Steps: Becoming More Advanced](#next-steps-becoming-more-advanced)
 - [FAQ for Citrix Administrators](#faq-for-citrix-administrators)
 - [Additional Resources](#additional-resources)
 
@@ -853,42 +852,6 @@ terraform plan
 # 4. Only then: Apply changes
 terraform apply
 ```
-
----
-
-## Next Steps: Becoming More Advanced
-
-### 1. Explore Advanced Examples
-
-See real-world scenarios including:
-- **Visibility Restrictions**: Limit apps to specific AD groups/users
-- **Custom Icons**: Brand applications with company logos
-- **Bulk Deployment**: Deploy 10+ applications simultaneously
-- **Multi-Environment**: Manage Dev/Test/Prod with workspaces
-
-**👉 [View Advanced Examples](EXAMPLES.md)**
-
----
-
-### 2. Learn Git Basics (Version Control)
-Track your Terraform configurations over time:
-- [Git for Beginners](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control)
-- Why? Rollback changes, collaborate with team, audit trail
-
----
-
-### 3. Best Practices for Citrix Admins
-- **Naming Conventions**: Use consistent naming (e.g., `app-name-environment`)
-- **Folder Structure**: Organize by environment (Dev/Test/Prod) or department
-- **Testing**: Always test in a non-production Delivery Group first
-- **Documentation**: Comment your code (future you will thank you!)
-
----
-
-### 4. Advanced Terraform Concepts (Optional)
-- **Workspaces**: Manage multiple environments (Dev/Test/Prod)
-- **Modules**: Create reusable configurations for your organization
-- **Remote State**: Store Terraform state in Azure Storage or AWS S3
 
 ---
 
