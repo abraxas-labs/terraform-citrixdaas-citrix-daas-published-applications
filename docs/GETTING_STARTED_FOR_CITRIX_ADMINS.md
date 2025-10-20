@@ -11,7 +11,6 @@
 ## Table of Contents
 
 - [What Is This? (GUI vs. Code Comparison)](#what-is-this-gui-vs-code-comparison)
-- [Why Should You Use This?](#why-should-you-use-this)
 - [Prerequisites: What You Need Before Starting](#prerequisites-what-you-need-before-starting)
   - [1. Existing Citrix Infrastructure](#1-existing-citrix-infrastructure)
   - [2. Citrix Cloud API Credentials](#2-citrix-cloud-api-credentials)
@@ -60,25 +59,6 @@ If you're a Citrix Administrator used to clicking through Citrix Studio, this mo
 **Result**: Same published application, same user experience—just created with code.
 
 **📖 See detailed step-by-step instructions below**, starting with [Prerequisites](#prerequisites-what-you-need-before-starting).
-
----
-
-## Why Should You Use This?
-
-### Time Savings
-| Task | Citrix Studio (Manual) | This Module (Automated) |
-|------|------------------------|-------------------------|
-| 1 Published App | 5 minutes (15-20 clicks) | 30 seconds |
-| 10 Published Apps | 50 minutes | 5 minutes |
-| 100 Published Apps | 8+ hours | 15 minutes |
-
-### Additional Benefits
-- ✅ **No Click Errors**: Configuration is validated before deployment
-- ✅ **Repeatable**: Deploy the same app to Dev/Test/Prod environments
-- ✅ **Version Control**: Track changes over time (who changed what, when)
-- ✅ **Documentation**: Your code IS your documentation
-- ✅ **Team Collaboration**: Share configurations, peer review changes
-- ✅ **Rollback**: Easily revert to previous configurations
 
 ---
 
