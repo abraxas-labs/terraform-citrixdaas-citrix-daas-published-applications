@@ -8,11 +8,23 @@
 
 Terraform module for creating and managing Citrix Published Applications in Citrix DaaS (Desktop as a Service).
 
+---
+
+## 🎓 Getting Started
+
+> [!IMPORTANT]
+> **New to Citrix DaaS and not familiar with Terraform?**
+>
+> 👉 **[Click here for the beginner-friendly Getting Started Guide](docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md)** 👈
+>
+> This step-by-step tutorial is specifically designed for Windows Administrators with no prior Terraform experience.
+
+---
+
 **⭐ Please Star This Repo!** If you find this module helpful, please [**give us a star**](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/stargazers) — it helps others discover this project and motivates us to continue improving it!
 
 **Error Handling and General Questions**: If you encounter an error during module execution or have a general question, please create a new issue at the following link: [GitHub Issues](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues).
 
-> **New to Terraform?** Check out our [Getting Started Guide for Citrix Administrators](docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md) — a complete tutorial with step-by-step instructions, screenshots, and GUI comparisons. Additional resources including advanced examples and troubleshooting can be found in the [Documentation](#documentation) section below.
 
 ## Usage
 
@@ -31,15 +43,6 @@ module "calculator" {
   citrix_deliverygroup_name                  = "Production-DG"
 }
 ```
-
-## Features
-
-- 🚀 **Simple, declarative application publishing** — Minimal configuration required
-- 🔒 **User/group visibility restrictions** — Control access via Active Directory
-- 🎨 **Custom application icons** — Brand your applications
-- ✅ **Production-ready** — Used in enterprise environments
-- 📦 **Validated inputs** — Comprehensive validation prevents errors
-- 🔄 **Composable outputs** — Chain with other Terraform modules
 
 ## Prerequisites
 
