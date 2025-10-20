@@ -37,7 +37,7 @@ module "calculator" {
   citrix_application_published_name          = "Calculator"
   citrix_application_description             = "Windows Calculator Application"
   citrix_application_command_line_executable = "C:\\Windows\\system32\\calc.exe"
-  citrix_application_command_line_arguments  = ""
+  citrix_application_command_line_arguments  = "C:\\Windows\\system32\\"
   citrix_application_working_directory       = "%HOMEDRIVE%%HOMEPATH%"
   citrix_application_folder_path             = "Production"
   citrix_deliverygroup_name                  = "Production-DG"

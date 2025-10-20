@@ -503,7 +503,7 @@ This file describes the Published Application you want to create (like filling o
 # main.tf
 module "calculator" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "=0.5.8"
+  version = "~> 1.0.13"
 
   # ============================================
   # Application Identity
