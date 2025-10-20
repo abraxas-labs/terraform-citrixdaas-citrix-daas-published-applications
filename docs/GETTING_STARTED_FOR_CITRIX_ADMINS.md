@@ -8,10 +8,19 @@
 
 ---
 
+> [!TIP]
+> **Please Star This Repo!** ⭐
+> If you find this module helpful, please give us a star — it helps others discover this project and motivates us to continue improving it!
+
+> [!NOTE]
+> **Error Handling and General Questions**
+> If you encounter an error during module execution or have a general question, please create a new issue at the following link: [GitHub Issues](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues).
+
+---
+
 ## Table of Contents
 
 - [What Is This? (GUI vs. Code Comparison)](#what-is-this-gui-vs-code-comparison)
-- [Why Should You Use This?](#why-should-you-use-this)
 - [Prerequisites: What You Need Before Starting](#prerequisites-what-you-need-before-starting)
   - [1. Existing Citrix Infrastructure](#1-existing-citrix-infrastructure)
   - [2. Citrix Cloud API Credentials](#2-citrix-cloud-api-credentials)
@@ -23,10 +32,6 @@
   - [Step 4: Set API Credentials](#step-4-set-api-credentials)
   - [Step 5: Deploy Your Application](#step-5-deploy-your-application)
   - [Step 6: Verify in Citrix Cloud](#step-6-verify-in-citrix-cloud)
-- [Troubleshooting for Beginners](#troubleshooting-for-beginners)
-- [Next Steps: Becoming More Advanced](#next-steps-becoming-more-advanced)
-- [FAQ for Citrix Administrators](#faq-for-citrix-administrators)
-- [Additional Resources](#additional-resources)
 
 ---
 
@@ -60,25 +65,6 @@ If you're a Citrix Administrator used to clicking through Citrix Studio, this mo
 **Result**: Same published application, same user experience—just created with code.
 
 **📖 See detailed step-by-step instructions below**, starting with [Prerequisites](#prerequisites-what-you-need-before-starting).
-
----
-
-## Why Should You Use This?
-
-### Time Savings
-| Task | Citrix Studio (Manual) | This Module (Automated) |
-|------|------------------------|-------------------------|
-| 1 Published App | 5 minutes (15-20 clicks) | 30 seconds |
-| 10 Published Apps | 50 minutes | 5 minutes |
-| 100 Published Apps | 8+ hours | 15 minutes |
-
-### Additional Benefits
-- ✅ **No Click Errors**: Configuration is validated before deployment
-- ✅ **Repeatable**: Deploy the same app to Dev/Test/Prod environments
-- ✅ **Version Control**: Track changes over time (who changed what, when)
-- ✅ **Documentation**: Your code IS your documentation
-- ✅ **Team Collaboration**: Share configurations, peer review changes
-- ✅ **Rollback**: Easily revert to previous configurations
 
 ---
 
@@ -503,7 +489,7 @@ This file describes the Published Application you want to create (like filling o
 # main.tf
 module "calculator" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "=0.5.8"
+  version = "~> 1.0.13"
 
   # ============================================
   # Application Identity
@@ -834,200 +820,3 @@ Destroy complete! Resources: 1 destroyed.
 <!-- SCREENSHOT PLACEHOLDER: Citrix Studio showing the newly created Calculator application -->
 
 **Congratulations!** 🎉 You've just created your first Published Application using Terraform.
-
----
-
-## Troubleshooting for Beginners
-
-### Common Errors and Solutions
-
-| Error Message | What It Means | Solution |
-|---------------|---------------|----------|
-| `Error: Error reading Delivery Group YOUR-DELIVERY-GROUP-NAME`<br>or<br>`Error: Object does not exist` | **MOST COMMON ERROR #1:** You forgot to replace `"YOUR-DELIVERY-GROUP-NAME"` with your actual Delivery Group name | **Quick fix:**<br>1. Open Citrix Cloud → Studio → Delivery Groups<br>2. Copy the EXACT name from the list<br>3. Open your `main.tf` file<br>4. Find the line with `citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"`<br>5. Replace with your copied name: `citrix_deliverygroup_name = "Production-DG"`<br>6. Save and re-run `terraform plan`<br><br>**See Step 4.5 for detailed instructions** |
-| `Error: Error reading Delivery Group [YourName]`<br>(with actual name) | **MOST COMMON ERROR #2:** The Delivery Group name has a typo or wrong case | **Step-by-step fix:**<br>1. Check the error message - what name did Terraform try?<br>2. Open Citrix Cloud → Studio → Delivery Groups<br>3. Compare: Is your name EXACTLY the same? (case-sensitive!)<br>4. Copy the correct name from Studio<br>5. Update `citrix_deliverygroup_name` in your module call<br>6. Save and re-run `terraform plan`<br><br>**Example:**<br>❌ WRONG: `"production-dg"` vs. `"Production-DG"`<br>✅ CORRECT: Exact copy from Studio |
-| `Error: Invalid API credentials` / `Unknown Citrix API Client Id` | Customer ID, Client ID, or Secret is incorrect or not set | 1. Verify environment variables are set (Step 4)<br>2. Check Citrix Cloud → API Access<br>3. Create new credentials if needed |
-| `Error: Application folder path "Production" not found` | The specified folder doesn't exist in Citrix Studio | **Option 1 - Create folder:**<br>1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply`<br><br>**Option 2 - Use root folder:**<br>1. Remove the line `citrix_application_folder_path = "Production"`<br>2. Or set it to `null`<br>3. Re-run `terraform apply` |
-| `Error: Failed to query provider` | Citrix provider version issue | Run `terraform init -upgrade` |
-| `Error: citrix_application_command_line_executable: invalid value` | Executable path has invalid format | Use double backslashes: `C:\\Windows\\system32\\calc.exe` |
-
-<!-- SCREENSHOT PLACEHOLDER: Example error output in terminal with solution highlighted -->
-
-**For detailed troubleshooting**, see [Troubleshooting Guide](TROUBLESHOOTING.md).
-
----
-
-### Validation Workflow (Before Deploying)
-
-Always run these commands in order:
-
-```bash
-# 1. Format your code (fixes indentation/spacing)
-terraform fmt
-
-# 2. Validate syntax (checks for errors)
-terraform validate
-
-# 3. Preview changes (see what will be created)
-terraform plan
-
-# 4. Only then: Apply changes
-terraform apply
-```
-
----
-
-## Next Steps: Becoming More Advanced
-
-### 1. Explore Advanced Examples
-
-See real-world scenarios including:
-- **Visibility Restrictions**: Limit apps to specific AD groups/users
-- **Custom Icons**: Brand applications with company logos
-- **Bulk Deployment**: Deploy 10+ applications simultaneously
-- **Multi-Environment**: Manage Dev/Test/Prod with workspaces
-
-**👉 [View Advanced Examples](EXAMPLES.md)**
-
----
-
-### 2. Learn Git Basics (Version Control)
-Track your Terraform configurations over time:
-- [Git for Beginners](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control)
-- Why? Rollback changes, collaborate with team, audit trail
-
----
-
-### 3. Best Practices for Citrix Admins
-- **Naming Conventions**: Use consistent naming (e.g., `app-name-environment`)
-- **Folder Structure**: Organize by environment (Dev/Test/Prod) or department
-- **Testing**: Always test in a non-production Delivery Group first
-- **Documentation**: Comment your code (future you will thank you!)
-
----
-
-### 4. Advanced Terraform Concepts (Optional)
-- **Workspaces**: Manage multiple environments (Dev/Test/Prod)
-- **Modules**: Create reusable configurations for your organization
-- **Remote State**: Store Terraform state in Azure Storage or AWS S3
-
----
-
-## FAQ for Citrix Administrators
-
-### Q: Does this replace Citrix Studio?
-**A**: No. Citrix Studio is still essential for:
-- Monitoring sessions
-- Troubleshooting user issues
-- Viewing real-time performance
-- Managing VDAs and Machine Catalogs
-
-This module automates **application creation/management only**—it doesn't replace Studio.
-
----
-
-### Q: Can I manage existing applications created in Studio?
-**A**: Yes, but you need to **import** them into Terraform first:
-```bash
-terraform import module.calculator.citrix_application.published_application <application-id>
-```
-[Terraform Import Documentation](https://www.terraform.io/docs/cli/import/index.html)
-
----
-
-### Q: What happens if I change an app in Studio after creating it with Terraform?
-**A**: Terraform detects "drift" (differences between your code and reality).
-When you run `terraform plan`, it shows:
-- What you have in Studio (actual state)
-- What your code defines (desired state)
-- What changes Terraform will make to reconcile them
-
-**Best Practice**: Make all changes in Terraform code, not in Studio (to avoid drift).
-
----
-
-### Q: Can I delete applications with Terraform?
-**A**: Yes. Remove the `module` block from `main.tf`, then run:
-```bash
-terraform apply
-```
-Terraform will ask: `Do you want to destroy these resources?`
-
----
-
-### Q: What if I make a mistake in my code?
-**A**:
-1. **Before `terraform apply`**: Just fix the code and re-run `terraform plan`
-2. **After `terraform apply`**: Fix the code and run `terraform apply` again (Terraform updates the resource)
-3. **Worst case**: Delete the application in Studio, fix the code, re-apply
-
----
-
-### Q: Is this safe to use in production?
-**A**: Yes, if you follow the validation workflow:
-1. Always run `terraform plan` first
-2. Review the output carefully
-3. Test in a non-production environment first
-4. Use version control (Git) to track changes
-
----
-
-### Q: Do I need to be a developer to use this?
-**A**: No! If you can:
-- Fill out forms in Citrix Studio
-- Copy/paste text
-- Follow step-by-step instructions
-
-...you can use this module. The examples are designed for Citrix Admins, not developers.
-
----
-
-### Q: Where can I get help?
-**A**:
-- **Issues/Bugs**: [GitHub Issues](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues)
-- **Questions**: Open a [GitHub Discussion](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/discussions)
-- **Citrix Provider Docs**: [Terraform Citrix Provider](https://registry.terraform.io/providers/citrix/citrix/latest/docs)
-
----
-
-## Additional Resources
-
-### For Citrix Administrators New to Terraform
-- [Terraform Tutorial for Beginners](https://learn.hashicorp.com/collections/terraform/aws-get-started)
-- [Infrastructure as Code Explained](https://www.redhat.com/en/topics/automation/what-is-infrastructure-as-code-iac)
-
-### Citrix-Specific Documentation
-- [Citrix Cloud API Documentation](https://developer-docs.citrix.com/)
-- [Citrix Terraform Provider](https://registry.terraform.io/providers/citrix/citrix/latest/docs)
-
-### Related Documentation
-- **[Main README](../README.md)** — Quick start and module reference
-- **[Advanced Examples](EXAMPLES.md)** — Real-world scenarios (visibility, icons, bulk deployment)
-- **[Troubleshooting Guide](TROUBLESHOOTING.md)** — Detailed error solutions and debugging
-
----
-
-## Contributing
-
-Contributions are welcome! If you're a Citrix Admin who found this module useful (or confusing), please:
-- Open an issue with feedback
-- Suggest improvements to documentation
-- Share your use cases/examples
-
-**Contributors**:
-- @cedfont
-- @abraxas-citrix-bot
-
----
-
-## License
-
-This module is licensed under the MIT License. See [LICENSE](../LICENSE) for details.
-
----
-
-## Feedback
-
-**If this module helped you**, please:
-- ⭐ Star this repository (click the star button at the top-right)
-- Share with other Citrix Administrators
-- Open an issue if you have questions or suggestions
