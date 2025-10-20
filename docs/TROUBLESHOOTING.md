@@ -4,11 +4,49 @@ This guide helps you resolve common issues when using the Citrix Published Appli
 
 ## Table of Contents
 
+- [Troubleshooting for Beginners](#troubleshooting-for-beginners)
+  - [Common Errors and Solutions](#common-errors-and-solutions)
+  - [Validation Workflow](#validation-workflow)
 - [Common Errors](#common-errors)
 - [Terraform Errors](#terraform-errors)
 - [Citrix-Specific Errors](#citrix-specific-errors)
 - [FAQ](#faq)
 - [Getting Help](#getting-help)
+
+---
+
+## Troubleshooting for Beginners
+
+### Common Errors and Solutions
+
+| Error Message | What It Means | Solution |
+|---------------|---------------|----------|
+| `Error: Error reading Delivery Group YOUR-DELIVERY-GROUP-NAME`<br>or<br>`Error: Object does not exist` | **MOST COMMON ERROR #1:** You forgot to replace `"YOUR-DELIVERY-GROUP-NAME"` with your actual Delivery Group name | **Quick fix:**<br>1. Open Citrix Cloud → Studio → Delivery Groups<br>2. Copy the EXACT name from the list<br>3. Open your `main.tf` file<br>4. Find the line with `citrix_deliverygroup_name = "YOUR-DELIVERY-GROUP-NAME"`<br>5. Replace with your copied name: `citrix_deliverygroup_name = "Production-DG"`<br>6. Save and re-run `terraform plan`<br><br>**See Step 4.5 in the Getting Started Guide for detailed instructions** |
+| `Error: Error reading Delivery Group [YourName]`<br>(with actual name) | **MOST COMMON ERROR #2:** The Delivery Group name has a typo or wrong case | **Step-by-step fix:**<br>1. Check the error message - what name did Terraform try?<br>2. Open Citrix Cloud → Studio → Delivery Groups<br>3. Compare: Is your name EXACTLY the same? (case-sensitive!)<br>4. Copy the correct name from Studio<br>5. Update `citrix_deliverygroup_name` in your module call<br>6. Save and re-run `terraform plan`<br><br>**Example:**<br>❌ WRONG: `"production-dg"` vs. `"Production-DG"`<br>✅ CORRECT: Exact copy from Studio |
+| `Error: Invalid API credentials` / `Unknown Citrix API Client Id` | Customer ID, Client ID, or Secret is incorrect or not set | 1. Verify environment variables are set (see Getting Started Guide Step 4)<br>2. Check Citrix Cloud → API Access<br>3. Create new credentials if needed |
+| `Error: Application folder path "Production" not found` | The specified folder doesn't exist in Citrix Studio | **Option 1 - Create folder:**<br>1. Open Citrix Studio → Applications<br>2. Create the folder "Production"<br>3. Re-run `terraform apply`<br><br>**Option 2 - Use root folder:**<br>1. Remove the line `citrix_application_folder_path = "Production"`<br>2. Or set it to `null`<br>3. Re-run `terraform apply` |
+| `Error: Failed to query provider` | Citrix provider version issue | Run `terraform init -upgrade` |
+| `Error: citrix_application_command_line_executable: invalid value` | Executable path has invalid format | Use double backslashes: `C:\\Windows\\system32\\calc.exe` |
+
+---
+
+### Validation Workflow
+
+Always run these commands in order before deploying:
+
+```bash
+# 1. Format your code (fixes indentation/spacing)
+terraform fmt
+
+# 2. Validate syntax (checks for errors)
+terraform validate
+
+# 3. Preview changes (see what will be created)
+terraform plan
+
+# 4. Only then: Apply changes
+terraform apply
+```
 
 ---
 
