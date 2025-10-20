@@ -8,6 +8,16 @@
 
 ---
 
+> [!TIP]
+> **Please Star This Repo!** ⭐
+> If you find this module helpful, please give us a star — it helps others discover this project and motivates us to continue improving it!
+
+> [!NOTE]
+> **Error Handling and General Questions**
+> If you encounter an error during module execution or have a general question, please create a new issue at the following link: [GitHub Issues](https://github.com/abraxas-labs/terraform-citrixdaas-citrix-daas-published-applications/issues).
+
+---
+
 ## Table of Contents
 
 - [What Is This? (GUI vs. Code Comparison)](#what-is-this-gui-vs-code-comparison)
