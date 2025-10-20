@@ -17,7 +17,7 @@ Terraform module for creating and managing Citrix Published Applications in Citr
 >
 > 👉 **[Click here for the beginner-friendly Getting Started Guide](docs/GETTING_STARTED_FOR_CITRIX_ADMINS.md)** 👈
 >
-> This step-by-step tutorial is specifically designed for Windows Administrators with no prior Terraform experience.
+> This step-by-step tutorial is specifically designed for Citrix Administrators with no prior Terraform experience.
 
 ---
 
