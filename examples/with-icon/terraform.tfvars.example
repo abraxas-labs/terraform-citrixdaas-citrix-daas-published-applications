@@ -1,7 +1,0 @@
-# Rename this file to terraform.tfvars and fill in your values
-
-citrix_customer_id        = "your-customer-id"
-citrix_client_id          = "your-client-id"
-citrix_client_secret      = "your-client-secret"
-citrix_deliverygroup_name = "Production-DG"
-citrix_application_folder = "Production"
