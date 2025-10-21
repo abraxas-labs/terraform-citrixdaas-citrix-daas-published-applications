@@ -434,7 +434,7 @@ terraform {
   required_providers {
     citrix = {
       source  = "citrix/citrix"
-      version = "~> 1.0.13"
+      version = "~> 0.5.0"
     }
   }
 }
@@ -489,7 +489,7 @@ This file describes the Published Application you want to create (like filling o
 # main.tf
 module "calculator" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   # ============================================
   # Application Identity

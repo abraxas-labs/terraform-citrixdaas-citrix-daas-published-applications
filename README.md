@@ -31,7 +31,7 @@ Terraform module for creating and managing Citrix Published Applications in Citr
 ```hcl
 module "calculator" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "calculator-app"
   citrix_application_published_name          = "Calculator"

@@ -1,6 +1,6 @@
 module "calculator" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "calculator-app"
   citrix_application_published_name          = "Calculator"
@@ -13,7 +13,7 @@ module "calculator" {
 
 module "notepad" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "notepad-app"
   citrix_application_published_name          = "Notepad"
@@ -26,7 +26,7 @@ module "notepad" {
 
 module "paint" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "paint-app"
   citrix_application_published_name          = "Paint"
@@ -39,7 +39,7 @@ module "paint" {
 
 module "wordpad" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "wordpad-app"
   citrix_application_published_name          = "WordPad"
@@ -52,7 +52,7 @@ module "wordpad" {
 
 module "snipping_tool" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "snipping-tool-app"
   citrix_application_published_name          = "Snipping Tool"
@@ -65,7 +65,7 @@ module "snipping_tool" {
 
 module "character_map" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "charmap-app"
   citrix_application_published_name          = "Character Map"
@@ -78,7 +78,7 @@ module "character_map" {
 
 module "control_panel" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "control-panel-app"
   citrix_application_published_name          = "Control Panel"
@@ -91,7 +91,7 @@ module "control_panel" {
 
 module "registry_editor" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "regedit-app"
   citrix_application_published_name          = "Registry Editor"
@@ -104,7 +104,7 @@ module "registry_editor" {
 
 module "task_manager" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "taskmgr-app"
   citrix_application_published_name          = "Task Manager"
@@ -117,7 +117,7 @@ module "task_manager" {
 
 module "command_prompt" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "cmd-app"
   citrix_application_published_name          = "Command Prompt"
@@ -130,7 +130,7 @@ module "command_prompt" {
 
 module "powershell" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "powershell-app"
   citrix_application_published_name          = "PowerShell"
@@ -143,7 +143,7 @@ module "powershell" {
 
 module "file_explorer" {
   source  = "abraxas-labs/citrix-daas-published-applications/citrixdaas"
-  version = "~> 1.0.13"
+  version = "~> 0.5.0"
 
   citrix_application_name                    = "explorer-app"
   citrix_application_published_name          = "File Explorer"
